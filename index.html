@@ -369,6 +369,7 @@ input[type=text],input[type=date],input[type=time],input[type=password],textarea
 }
 
 /* 영상 달력 */
+.mvday{scroll-margin-top:64px;transition:background .3s}.mvday.on .mvdh b{color:var(--y)}
 .seg button[data-kd].on{border-color:var(--ink);font-weight:700}
 .mvtop{display:flex;gap:8px;align-items:center}
 .mvsw{display:flex;background:var(--soft);border-radius:999px;padding:3px}.mvsw button{padding:5px 12px;border-radius:999px;font-size:13px;color:var(--sub);min-height:30px}
@@ -1131,7 +1132,7 @@ const Movies = { edit:false, busy:false, mode:'cal', month:null, sel:null,
   row(m){ return `<div class="mvrow" data-mv="${m.id}"><a class="mvlink" href="${tmdbUrl(m)}" target="_blank" rel="noopener">${this.poster(m)}
     <div class="mvt"><b>${esc(m.title)}</b><small>${KIND[m.kind] || '영화'}${m.year ? ` · ${m.year}` : ''}</small></div></a>
     <div class="mvb"><button class="mvc" data-mved="${m.id}">수정</button></div></div>`; },
-  dayList(day, L){ const d = parse(day); return `<section class="mvday"><div class="mvdh"><b>${d.getMonth()+1}월 ${d.getDate()}일</b><span>${WD[d.getDay()]}요일</span></div><div class="mvds">${L.length} 작품 감상했어요.</div>${L.map(m => this.row(m)).join('')}</section>`; },
+  dayList(day, L){ const d = parse(day); return `<section class="mvday${day===this.sel?' on':''}" id="mvd-${day}"><div class="mvdh"><b>${d.getMonth()+1}월 ${d.getDate()}일</b><span>${WD[d.getDay()]}요일</span></div><div class="mvds">${L.length} 작품 감상했어요.</div>${L.map(m => this.row(m)).join('')}</section>`; },
   listHTML(){ const dated = S.movies.filter(m => m.watched_on).sort((a,b) => b.watched_on.localeCompare(a.watched_on) || a.title.localeCompare(b.title));
     const undated = S.movies.filter(m => !m.watched_on).sort((a,b) => (b.year||0) - (a.year||0) || a.title.localeCompare(b.title));
     let h = '', i = 0, mon = '';
@@ -1144,7 +1145,7 @@ const Movies = { edit:false, busy:false, mode:'cal', month:null, sel:null,
     const y = this.month.getFullYear(), mo = this.month.getMonth(), pre = `${y}-${String(mo+1).padStart(2,'0')}-`;
     const by = {}; S.movies.filter(m => m.watched_on?.startsWith(pre)).sort((a,b) => (a.created_at||'').localeCompare(b.created_at||'')).forEach(m => (by[m.watched_on] ||= []).push(m));
     const days = Object.keys(by).sort(), total = days.reduce((n,k) => n + by[k].length, 0);
-    if(!this.sel || !this.sel.startsWith(pre) || !by[this.sel]) this.sel = days[days.length-1] || null;
+    if(this.sel && !by[this.sel]) this.sel = null;
     const first = new Date(y, mo, 1).getDay(), n = new Date(y, mo+1, 0).getDate(); let cells = '';
     for(let k=0; k<first; k++) cells += '<div class="mcd blank"></div>';
     for(let dd=1; dd<=n; dd++){ const key = pre + String(dd).padStart(2,'0'), L = by[key];
@@ -1153,7 +1154,7 @@ const Movies = { edit:false, busy:false, mode:'cal', month:null, sel:null,
     return `<div class="mchead"><button class="mca" data-mvm="-1" aria-label="이전 달">◀</button><b>${String(y).slice(2)}.${String(mo+1).padStart(2,'0')} 캘린더</b><button class="mca" data-mvm="1" aria-label="다음 달">▶</button></div>
       <div class="mcsub"><b>${total}편</b> · ${days.length}일 감상</div>
       <div class="mcgrid">${WD.map(w=>`<div class="mcw">${w}</div>`).join('')}${cells}</div>
-      ${this.sel ? this.dayList(this.sel, by[this.sel]) : '<div class="empty">이 달에는 본 영상이 없어요</div>'}`; },
+      ${days.length ? days.map(k => this.dayList(k, by[k])).join('') : '<div class="empty">이 달에는 본 영상이 없어요</div>'}`; },
   render(){ const cal = this.mode==='cal';
     $('#main').innerHTML = `<section class="mvwrap"><div class="albhead"><h2>영상 <small class="mcount">${S.movies.length}편</small></h2>
       <div class="mvtop"><div class="mvsw"><button class="${cal?'on':''}" data-mvmode="cal">달력</button><button class="${cal?'':'on'}" data-mvmode="list">목록</button></div><button class="btn pri" data-mvadd="1">+ 영상</button></div></div>
@@ -1162,7 +1163,7 @@ const Movies = { edit:false, busy:false, mode:'cal', month:null, sel:null,
     root.onclick = e => { const b = e.target.closest('[data-mvmode],[data-mvm],[data-mvday]'); if(!b) return; e.stopPropagation();
       if(b.dataset.mvmode){ this.mode = b.dataset.mvmode; this.render(); }
       else if(b.dataset.mvm){ this.month = new Date(this.month.getFullYear(), this.month.getMonth() + +b.dataset.mvm, 1); this.sel = null; this.render(); }
-      else { this.sel = b.dataset.mvday; this.render(); $('#main').querySelector('.mvday')?.scrollIntoView({behavior:'smooth', block:'nearest'}); } };
+      else { this.sel = b.dataset.mvday; this.render(); document.getElementById('mvd-' + this.sel)?.scrollIntoView({behavior:'smooth', block:'start'}); } };
     this.fill(); },
   form(m){ const isNew = !m; m = m || {title:'', year:'', kind:'movie', watched_on:ymd(new Date())}; let kind = m.kind || 'movie';
     openSheet(`<div class="sh"><h3>${isNew ? '영상 기록' : '영상 수정'}</h3><button class="ib cx" data-close aria-label="닫기"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
