@@ -342,7 +342,7 @@ input[type=text],input[type=date],input[type=time],input[type=password],textarea
 .bw{display:flex;flex-direction:column;align-items:flex-start;min-width:0}.msg.mine .bw{align-items:flex-end}
 .rxs{display:flex;gap:3px;margin-top:-6px;padding:0 6px;position:relative;z-index:1}
 .cm .rxs{margin:0 0 4px;padding:0}
-.rx{display:inline-flex;align-items:center;gap:2px;font-size:13px;line-height:1;padding:2px 6px 2px 4px;border-radius:999px;background:var(--card);border:1px solid var(--line);box-shadow:0 1px 2px #0001}
+.rx{display:inline-flex;align-items:center;justify-content:center;font-size:13px;line-height:1;padding:3px 5px;border-radius:999px;background:var(--card);border:1.5px solid var(--line);box-shadow:0 1px 2px #0001}
 .rx i{font-style:normal;font-size:9.5px;color:var(--sub)}.rx.me{cursor:pointer}.rx.yuna{border-color:var(--y,#b9a3f0)}.rx.jiwoo{border-color:var(--j,#f0d27a)}
 .rxpop{position:fixed;z-index:90;display:flex;gap:2px;padding:5px;border-radius:999px;background:var(--card);border:1px solid var(--line);box-shadow:0 6px 24px #0003;animation:rxin .15s ease-out}
 .rxpop button{width:42px;height:42px;font-size:25px;border-radius:50%;display:grid;place-items:center;line-height:1}
@@ -587,7 +587,7 @@ function renderChat(){ const box = $('#chat'); if(!box) return; const L = S.echa
 /* ===== 표정 남기기 (꾹 누르기) ===== */
 const RX = [['heart','❤️'],['smile','😊'],['like','👍'],['angry','😠'],['sad','😢']], RXE = Object.fromEntries(RX);
 function rxRow(c){ const r = c.react || {}; const ws = ['yuna','jiwoo'].filter(w => RXE[r[w]]); if(!ws.length) return '';
-  return `<div class="rxs">${ws.map(w => `<span class="rx ${w}${w===S.me?' me':''}" ${w===S.me?`data-rxoff="${c.id}"`:''} title="${WHO[w]}">${RXE[r[w]]}<i>${WHO[w][0]}</i></span>`).join('')}</div>`; }
+  return `<div class="rxs">${ws.map(w => `<span class="rx ${w}${w===S.me?' me':''}" ${w===S.me?`data-rxoff="${c.id}"`:''} title="${WHO[w]}">${RXE[r[w]]}</span>`).join('')}</div>`; }
 async function setReact(tb, id, key){ const L = S[tb], c = L.find(x=>x.id===id); if(!c) return; const prev = c.react || {};
   const next = {...prev}; if(!key || next[S.me]===key) delete next[S.me]; else next[S.me] = key;
   c.react = next; tb==='echats' ? renderChat() : renderComments();
