@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>유나 · 지우 아카이브</title>
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-180.png">
@@ -298,6 +298,21 @@ textarea{resize:vertical;min-height:68px}
     white-space:normal;word-break:break-all;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;text-overflow:clip}
   .cal .wd{padding:6px 0}
 }
+/* 창 머리·닫기 버튼·아래 입력칸 */
+.sh{padding-right:max(12px,env(safe-area-inset-right))}
+.sh>*{flex:none}.sh h3{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ib.cx{width:36px;height:36px;border:0;border-radius:50%;background:var(--soft);color:var(--ink)}
+.sheet{max-width:100vw}
+.crow textarea{resize:none}
+.evhead h2{font-size:19px;line-height:1.3}
+.evhead{padding:12px 14px;margin-bottom:12px}
+@media(max-width:600px){
+  .modal .composer,.panel>.composer{padding-bottom:calc(14px + env(safe-area-inset-bottom))}
+  .sf{padding-bottom:calc(10px + env(safe-area-inset-bottom))}
+  .fab{bottom:calc(18px + env(safe-area-inset-bottom))}
+  .sheet{max-height:88vh}
+}
+.top{padding-top:max(8px,env(safe-area-inset-top))}
 /* 아이폰에서 입력할 때 화면이 확대되지 않도록 입력칸 글씨는 16px 유지 */
 input[type=text],input[type=date],input[type=time],input[type=password],textarea,select{font-size:16px}
 </style>
@@ -498,7 +513,7 @@ const chatCount = id => { const n = S.echats.filter(c=>c.event_id===id).length; 
 
 function eventForm(e){ const isNew = !e; e = e || {owner:S.me, title:'', all_day:false, start_date:S.sel, start_time:'10:00', end_date:S.sel, end_time:'11:00', memo:''};
   let owner = e.owner;
-  openSheet(`<div class="sh"><h3>${isNew?'새 일정':'일정 수정'}</h3><button class="ib" data-close aria-label="닫기">×</button></div>
+  openSheet(`<div class="sh"><h3>${isNew?'새 일정':'일정 수정'}</h3><button class="ib cx" data-close aria-label="닫기"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
   <form class="sb" id="evf"><div class="field"><span>누구의 일정이에요?</span><div class="seg">${['yuna','jiwoo','us'].map(w=>`<button type="button" class="${w}${owner===w?' on':''}" data-own="${w}">${w==='us'?'<span class="dots"><i></i><i></i></span>':av(w)}${OWN[w]} 일정</button>`).join('')}</div></div>
   <label class="field"><span>제목</span><input type="text" name="title" value="${esc(e.title)}" required maxlength="120" placeholder="예: 저녁 약속"></label>
   <label class="check"><input type="checkbox" name="all_day" ${e.all_day?'checked':''}> 하루 종일</label>
@@ -521,7 +536,7 @@ function eventForm(e){ const isNew = !e; e = e || {owner:S.me, title:'', all_day
   if(!isNew) $('#evdel').onclick = async () => { if(await ask('이 일정과 댓글을 모두 지울까요?')){ await API.del('events', e.id); closeSheet(); refresh(); toast('지웠어요'); } };
 }
 function openEvent(id){ const e = S.events.find(x=>x.id===id); if(!e) return; S.openEvent = id;
-  openSheet(`<div class="sh"><h3>${OWN[e.owner]||''} 일정</h3><button class="btn" id="evedit">수정</button><button class="ib" data-close aria-label="닫기">×</button></div>
+  openSheet(`<div class="sh"><h3>${OWN[e.owner]||''} 일정</h3><button class="btn" id="evedit">수정</button><button class="ib cx" data-close aria-label="닫기"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
   <div class="sb" id="evbody"><div class="evhead ${e.owner}"><h2>${esc(e.title)}</h2><div>${kdate(e.start_date)} · ${esc(timeText(e))}</div>${e.memo?`<p>${esc(e.memo)}</p>`:''}</div><div class="chat" id="chat"></div></div>
   <form class="composer" id="evc"><div class="crow"><textarea placeholder="${WHO[S.me]}(으)로 댓글 남기기" maxlength="2000" rows="1"></textarea><button class="send">보내기</button></div></form>`);
   $('#evedit').onclick = () => { S.openEvent = null; eventForm(e); };
@@ -551,7 +566,7 @@ function renderAlbum(){ if(S.folder!=='all' && S.folder!=='none' && !S.folders.s
 function folderPicker(cur){ return `<div class="field"><span>폴더</span><div class="fpick">${[...S.folders.map(f=>[f.id,f.name]), ['', '폴더 없음']].map(([k,t]) => `<button type="button" class="chip${(cur||'')===k?' on':''}" data-pf="${k}">${esc(t)}</button>`).join('')}</div></div>`; }
 function bindPicker(root, set){ root.querySelectorAll('[data-pf]').forEach(b => b.onclick = () => { set(b.dataset.pf || null); root.querySelectorAll('[data-pf]').forEach(x => x.classList.toggle('on', x===b)); }); }
 function folderManager(){ const rows = () => S.folders.map(f => `<div class="frow"><input type="text" value="${esc(f.name)}" data-fid="${f.id}" maxlength="20" aria-label="폴더 이름"><button class="btn danger" data-fdel="${f.id}">삭제</button></div>`).join('');
-  openSheet(`<div class="sh"><h3>폴더 관리</h3><button class="ib" data-close aria-label="닫기">×</button></div><div class="sb" id="fmb">
+  openSheet(`<div class="sh"><h3>폴더 관리</h3><button class="ib cx" data-close aria-label="닫기"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div><div class="sb" id="fmb">
     <p style="margin:0 0 12px;color:var(--sub);font-size:14px">이름을 고치면 바로 저장돼요. 폴더를 지워도 사진은 지워지지 않고 '폴더 없음'으로 옮겨져요.</p>
     <div id="frows">${rows()}</div><div class="frow" style="margin-top:14px"><input type="text" id="fnew" placeholder="새 폴더 이름 (예: 여행)" maxlength="20"><button class="btn pri" id="fadd">추가</button></div></div>`);
   const box = $('#fmb');
@@ -585,7 +600,7 @@ function composer(opts){ /* 사진·동영상 첨부 + 날짜가 있는 입력�
   return el; }
 
 function postForm(p){ const isNew = !p;
-  openSheet(`<div class="sh"><h3>${isNew?'새 사진첩 글':'글 수정'}</h3><button class="ib" data-close aria-label="닫기">×</button></div><div class="sb" id="pfb"></div>`);
+  openSheet(`<div class="sh"><h3>${isNew?'새 사진첩 글':'글 수정'}</h3><button class="ib cx" data-close aria-label="닫기"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div><div class="sb" id="pfb"></div>`);
   if(isNew){ let fid = S.folders.some(f=>f.id===S.folder) ? S.folder : (S.folders.find(f=>f.name==='일상') || S.folders[0])?.id || null;
     $('#pfb').innerHTML = folderPicker(fid); bindPicker($('#pfb'), v => fid = v);
     const c = composer({placeholder:'어떤 날이었어요? 사진 없이 글만 써도 돼요', label:'올리기', noEnter:true, onSubmit: async ({body, media, memory_date}) => {
@@ -703,7 +718,7 @@ function applyLook(){ const pr = S.profiles?.[S.me] || {}; const skin = pr.skin 
 async function setProfile(patch){ S.profiles[S.me] = {...(S.profiles[S.me]||{}), ...patch}; applyLook(); render();
   try{ await API.saveProfile(S.me, patch); } catch(e){ console.error(e); toast('설정을 저장하지 못했어요'); } }
 function openSettings(){ if(!S.me) return whoGate(); const pr = S.profiles[S.me] || {}; const {skin, mode} = applyLook();
-  openSheet(`<div class="sh"><h3>설정</h3><button class="ib" data-close aria-label="닫기">×</button></div><div class="sb" id="setb">
+  openSheet(`<div class="sh"><h3>설정</h3><button class="ib cx" data-close aria-label="닫기"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div><div class="sb" id="setb">
     <div class="sec"><h4>이 기기에서 기록하는 사람</h4><div class="seg">${['yuna','jiwoo'].map(w=>`<button type="button" class="${w}${S.me===w?' on':''}" data-me="${w}">${av(w)}${WHO[w]}</button>`).join('')}</div></div>
     <div class="sec"><h4>내 프로필 사진</h4><div class="prof">${av(S.me,'big')}<div class="row" style="flex:1"><button class="btn pri" data-act="avset">사진 고르기</button>${pr.avatar?'<button class="btn" data-act="avdel">기본으로</button>':''}</div></div></div>
     <div class="sec"><h4>테마</h4><div class="skins">${SKINS.map(([k,t,a,b])=>`<button data-sk="${k}" class="${k===skin?'on':''}"><i style="background:linear-gradient(90deg,${a} 0 55%,${b} 55%)"></i>${t}</button>`).join('')}</div></div>
@@ -828,7 +843,7 @@ const Draw = { strokes:[], board:null, ch:null, others:[], ghost:null, buf:{}, t
     else if(p.t==='sync'){ for(const s of p.strokes) b ? b.remoteStart(s) : (this.strokes.some(x=>x.id===s.id) || this.strokes.push(s)); } },
   saveSheet(){ if(!this.board.strokes.length){ toast('먼저 그림을 그려 주세요'); return; }
     let fid = (S.folders.find(f=>f.name==='그림') || S.folders.find(f=>f.name==='일상') || S.folders[0])?.id || null;
-    openSheet(`<div class="sh"><h3>사진첩에 저장</h3><button class="ib" data-close aria-label="닫기">×</button></div><div class="sb" id="dsv">${folderPicker(fid)}
+    openSheet(`<div class="sh"><h3>사진첩에 저장</h3><button class="ib cx" data-close aria-label="닫기"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div><div class="sb" id="dsv">${folderPicker(fid)}
       <label class="field"><span>내용</span><textarea id="dcap" maxlength="4000" placeholder="어떤 그림이에요?"></textarea></label>
       <label class="check"><input type="checkbox" id="dhd"> 날짜 넣기 (캘린더에 추억으로)</label><label class="field"><input type="date" id="ddt" value="${ymd(new Date())}"></label></div>
       <div class="sf"><button class="btn" data-close>취소</button><button class="btn pri" id="dgo">저장</button></div>`);
@@ -887,7 +902,7 @@ const Music = { edit:false, busy:false,
     $('#main').innerHTML = `<section><div class="albhead"><h2>음악 <small class="mcount">${L.length}곡</small></h2><button class="btn medbtn${this.edit?' on':''}" data-mus="edit">${this.edit?'완료':'편집'}</button><button class="btn pri" data-mus="add">+ 음악</button></div>
       ${L.length ? `<div class="mgrid">${L.map(m => this.card(m)).join('')}</div>` : '<div class="empty">유튜브나 스포티파이 링크를 붙여 넣어 첫 곡을 추가해 보세요</div>'}</section>`;
     this.fill(); },
-  addSheet(){ openSheet(`<div class="sh"><h3>음악 추가</h3><button class="ib" data-close aria-label="닫기">×</button></div>
+  addSheet(){ openSheet(`<div class="sh"><h3>음악 추가</h3><button class="ib cx" data-close aria-label="닫기"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
     <form class="sb" id="maf"><label class="field"><span>유튜브나 스포티파이 링크</span><input type="text" id="murl" inputmode="url" autocomplete="off" placeholder="https://youtu.be/… 또는 https://open.spotify.com/…"></label><div class="err" id="merr"></div></form>
     <div class="sf"><button class="btn" data-close>취소</button><button class="btn pri" id="mgo">추가</button></div>`);
     const f = $('#maf'), inp = $('#murl'); setTimeout(() => inp.focus(), 50);
@@ -900,7 +915,7 @@ const Music = { edit:false, busy:false,
       try{ await API.put('music', {mkey, url:raw, platform, title:j?.title?.slice(0,200) || null, thumb:j?.thumb || ytThumb(mkey) || null, meta_tried:true, shared_by:S.me, shared_at:new Date().toISOString()});
         closeSheet(); await refresh(); toast(j ? '추가했어요' : '추가했어요. 제목은 편집에서 적을 수 있어요'); }
       catch(err){ console.error(err); b.disabled = false; b.textContent = '추가'; $('#merr').textContent = '추가하지 못했어요'; } }; },
-  rename(m){ openSheet(`<div class="sh"><h3>제목</h3><button class="ib" data-close aria-label="닫기">×</button></div><form class="sb" id="mrf"><label class="field"><span>곡 제목</span><input type="text" id="mtt" maxlength="200" value="${esc(m.title||'')}"></label></form>
+  rename(m){ openSheet(`<div class="sh"><h3>제목</h3><button class="ib cx" data-close aria-label="닫기"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div><form class="sb" id="mrf"><label class="field"><span>곡 제목</span><input type="text" id="mtt" maxlength="200" value="${esc(m.title||'')}"></label></form>
     <div class="sf"><button class="btn" data-close>취소</button><button class="btn pri" id="mrs">저장</button></div>`);
     $('#mrf').onsubmit = e => { e.preventDefault(); $('#mrs').click(); };
     $('#mrs').onclick = async () => { const t = $('#mtt').value.trim(); try{ await API.put('music', {id:m.id, title:t || null, meta_tried:true}); closeSheet(); await refresh(); } catch(e){ toast('저장하지 못했어요'); } }; }
@@ -934,7 +949,7 @@ function parseNotionPage(name, text){
   if(onlyFiles) return {key, skip:true, title};
   return {key:'notion:' + key, title, folder:(props['폴더']||'').trim(), caption:parts.join('\n\n').trim(), date:d, imgs:[...new Set(imgs)]};
 }
-function notionSheet(){ openSheet(`<div class="sh"><h3>노션에서 가져오기</h3><button class="ib" data-close aria-label="닫기">×</button></div><div class="sb" id="nib">
+function notionSheet(){ openSheet(`<div class="sh"><h3>노션에서 가져오기</h3><button class="ib cx" data-close aria-label="닫기"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div><div class="sb" id="nib">
     <p style="margin:0 0 10px">노션에서 <b>Markdown &amp; CSV</b>, <b>파일과 이미지 포함</b>으로 내보낸 zip 파일을 골라 주세요.</p>
     <ul style="margin:0 0 14px;padding-left:20px;color:var(--sub);font-size:14px"><li>노션 폴더는 사진첩 폴더로 옮겨지고, 없는 폴더는 새로 만들어요.</li><li>날짜는 추억 날짜로 들어가서 캘린더에도 나와요.</li><li>${WHO[S.me]} 이름으로 올라가요. 이미 가져온 기록은 다시 가져오지 않아요.</li><li>가져온 글은 알림이 가지 않아요.</li></ul>
     <div id="niprog" style="font-size:15px"></div></div>
@@ -997,7 +1012,7 @@ const Movies = { edit:false, busy:false,
       ${S.movies.length ? h : '<div class="empty">같이 본 영화나 드라마를 기록해 보세요</div>'}</section>`;
     this.fill(); },
   form(m){ const isNew = !m; m = m || {title:'', year:'', watched_on:ymd(new Date())};
-    openSheet(`<div class="sh"><h3>${isNew ? '영상 기록' : '영상 수정'}</h3><button class="ib" data-close aria-label="닫기">×</button></div>
+    openSheet(`<div class="sh"><h3>${isNew ? '영상 기록' : '영상 수정'}</h3><button class="ib cx" data-close aria-label="닫기"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
     <form class="sb" id="mvf"><label class="field"><span>제목</span><input type="text" name="title" maxlength="200" value="${esc(m.title)}" placeholder="예: 프랙티컬 매직, 장난스런 키스" required></label>
       <div class="row"><label class="field"><span>개봉 연도</span><input type="text" name="year" inputmode="numeric" maxlength="4" value="${m.year||''}" placeholder="모르면 비워 두세요"></label>
       <label class="field"><span>본 날짜</span><input type="date" name="watched_on" value="${m.watched_on||''}"></label></div>
@@ -1074,7 +1089,7 @@ function icsToEvents(text){
         cancelled:/CANCELLED/i.test(e.STATUS?.v||''), comments:e.RRULE ? [] : (e.COMMENTS||[]).map(c => ({who:c.params['X-WHO'], at:icsTime({v:c.params['X-AT']||'', params:{}})?.d, text:icsText(c.v)})).filter(c => OWN[c.who] && c.who !== 'us' && c.text)}); } }
   return rows; }
 function icsSheet(){ let owner = 'us'; let rows = null, fname = '';
-  openSheet(`<div class="sh"><h3>캘린더 파일 가져오기</h3><button class="ib" data-close aria-label="닫기">×</button></div><div class="sb" id="icb">
+  openSheet(`<div class="sh"><h3>캘린더 파일 가져오기</h3><button class="ib cx" data-close aria-label="닫기"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div><div class="sb" id="icb">
     <p style="margin:0 0 12px">TimeTree, 구글, 애플 캘린더에서 내보낸 <b>.ics</b> 파일을 골라 주세요.</p>
     <div class="field"><span>누구의 일정으로 넣을까요?</span><div class="seg">${['yuna','jiwoo','us'].map(w=>`<button type="button" class="${w}${owner===w?' on':''}" data-own="${w}">${w==='us'?'<span class="dots"><i></i><i></i></span>':av(w)}${OWN[w]}</button>`).join('')}</div></div>
     <ul style="margin:0 0 12px;padding-left:20px;color:var(--sub);font-size:14px"><li>반복 일정은 앞으로 2년치까지 펼쳐서 넣어요.</li><li>메모와 장소는 일정 메모로 들어가요. 이미 가져온 일정은 다시 넣지 않고, 알림도 가지 않아요.</li></ul>
