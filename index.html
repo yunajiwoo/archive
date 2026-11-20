@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>유나 · 지우 아카이브</title>
+<title>애기 · 언니 아카이브</title>
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-180.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -260,7 +260,7 @@ textarea{resize:vertical;min-height:68px}
 .cover.txt{display:flex;align-items:center;justify-content:center;padding:14px;background:linear-gradient(160deg,var(--soft),var(--card))}
 .cover.txt span{font-size:15px;line-height:1.5;text-align:center;white-space:pre-wrap;overflow-wrap:anywhere;display:-webkit-box;-webkit-line-clamp:6;-webkit-box-orient:vertical;overflow:hidden}
 /* 영화 */
-.mvwrap{max-width:760px}
+.mvwrap{max-width:760px;padding-bottom:90px}
 .mvmon{font-size:13px;color:var(--sub);margin:18px 0 0;font-weight:500}
 .mvday{border-bottom:1px solid var(--line);padding:14px 0 8px}
 .mvdh{display:flex;align-items:baseline;gap:6px}.mvdh b{font-size:19px;font-weight:700;letter-spacing:-.02em}.mvdh span{font-size:12px;color:var(--sub)}
@@ -348,12 +348,55 @@ input[type=text],input[type=date],input[type=time],input[type=password],textarea
 .rxpop button{width:42px;height:42px;font-size:25px;border-radius:50%;display:grid;place-items:center;line-height:1}
 .rxpop button.on{background:var(--soft)}.rxpop button:active{transform:scale(1.25)}
 @keyframes rxin{from{opacity:0;transform:scale(.8)}}
+
+/* 일정 날짜·시간 한 줄 */
+.row.dtr{flex-wrap:nowrap;gap:8px}.row.dtr>.field{flex:1.5 1 0;min-width:0}.row.dtr>.field.tm{flex:1 1 0}
+.row.dtr input{width:100%;min-width:0;white-space:nowrap;font-size:15px;text-align:left}
+.row.dtr input[type=date]{-webkit-appearance:none;appearance:none;display:block;padding-inline:10px}
+.row.dtr input[type=date]::-webkit-date-and-time-value{text-align:left;white-space:nowrap}
+.tmi{font-variant-numeric:tabular-nums;letter-spacing:.02em}.tmi.bad{border-color:#e05a6a!important;background:#fde8eb}
+.stor{display:flex;justify-content:space-between;gap:8px;font-size:14px}.stor span{color:var(--sub)}
+.sbar{height:7px;border-radius:9px;background:var(--soft);overflow:hidden;margin:7px 0}.sbar i{display:block;height:100%;background:var(--y);border-radius:9px}
+.sec .hint{font-size:12px;color:var(--sub);margin:0;line-height:1.5}
+/* 캘린더 일정: 타임트리처럼 한 줄 · 꽉 찬 색 */
+.cal .pill{white-space:nowrap!important;display:block!important;-webkit-line-clamp:unset!important;overflow:hidden;text-overflow:clip!important;word-break:normal!important;
+  border-left:0!important;color:#fff!important;font-weight:500;border-radius:3px;text-shadow:0 0 1px #0002}
+.cal .pill.yuna{background:var(--y)}.cal .pill.jiwoo{background:var(--j)}.cal .pill.us{background:var(--m)}
+.cal .pill.memory{background:var(--mbg);color:var(--mink)!important;text-shadow:none}
+@media(max-width:600px){
+  .cal .day{min-height:78px;padding:3px 0 4px;gap:2px}
+  .cal .pill{font-size:9.6px;line-height:15px;height:15px;padding:0 2px;margin:0 1px;letter-spacing:-.06em;border-radius:2.5px}
+}
+
+/* 영상 달력 */
+.seg button[data-kd].on{border-color:var(--ink);font-weight:700}
+.mvtop{display:flex;gap:8px;align-items:center}
+.mvsw{display:flex;background:var(--soft);border-radius:999px;padding:3px}.mvsw button{padding:5px 12px;border-radius:999px;font-size:13px;color:var(--sub);min-height:30px}
+.mvsw button.on{background:var(--card);color:var(--ink);box-shadow:0 1px 2.5px #0002}
+.mchead{display:flex;align-items:center;gap:10px;margin:6px 0 2px}.mchead b{font-size:21px;font-weight:700;letter-spacing:-.02em}
+.mca{width:28px;height:28px;border-radius:50%;color:var(--sub);font-size:12px;display:grid;place-items:center}.mca:active{background:var(--soft)}
+.mcsub{font-size:13px;color:var(--sub);margin-bottom:12px}.mcsub b{color:var(--y);font-weight:700}
+.mcgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:8px}
+.mcw{text-align:center;font-size:12px;color:var(--sub);padding:4px 0 8px}
+.mcd{position:relative;aspect-ratio:2/3;border-radius:6px;display:grid;place-items:center;color:var(--sub);font-size:14px;opacity:.75}
+.mcd.blank{visibility:hidden}
+.mcd.has{opacity:1;padding:0;overflow:visible;box-shadow:0 2px 6px #0002;border-radius:6px}
+.mcd.has.on{outline:2.5px solid var(--y);outline-offset:1.5px}
+.mcp{position:absolute;inset:0;border-radius:6px;overflow:hidden;background:linear-gradient(160deg,var(--y),var(--m));display:grid;place-items:center}
+.mcp img{width:100%;height:100%;object-fit:cover;display:block}
+.mcp span{color:#fff;font-size:10px;font-weight:700;padding:3px;text-align:center;line-height:1.25;word-break:keep-all;overflow:hidden;max-height:100%}
+.mcd em{position:absolute;left:4px;bottom:3px;font-style:normal;font-size:11px;font-weight:700;color:#fff;text-shadow:0 0 3px #000c,0 1px 2px #000a}
+.mcn{position:absolute;top:-5px;right:-5px;min-width:19px;height:19px;padding:0 4px;border-radius:999px;background:var(--y);color:#fff;font-style:normal;font-size:11px;font-weight:700;display:grid;place-items:center;border:2px solid var(--bg);z-index:1}
+.mvlink{display:flex;align-items:center;gap:12px;flex:1;min-width:0;color:inherit;text-decoration:none}
+.mvlink:active{opacity:.7}
+.mvp span{font-size:10px;padding:3px;text-align:center;color:var(--sub);line-height:1.2;overflow:hidden;max-height:100%;word-break:keep-all}
+@media(max-width:600px){.mcgrid{gap:3px}.mcd{font-size:12px}.mcd em{font-size:10px}.mcn{min-width:17px;height:17px;font-size:10px;top:-4px;right:-4px}.mvwrap .albhead h2 .mcount{display:none}}
 </style>
 </head>
 <body>
 <div id="demo" class="demo hidden">미리보기 모드예요. 예시 데이터라 새로고침하면 사라져요.</div>
 <header class="top">
-  <div class="brand"><span class="dots"><i></i><i></i></span><h1>유나 · 지우 아카이브</h1></div>
+  <div class="brand"><span class="dots"><i></i><i></i></span><h1>애기 · 언니 아카이브</h1></div>
   <nav class="tabs"><button data-v="cal" class="on">캘린더</button><button data-v="album">사진첩</button><button data-v="music">음악</button><button data-v="movies">영상</button><button data-v="draw">그리기</button><button data-v="news">새소식</button></nav>
   <button class="me" id="meBtn" title="나·프로필 사진·테마 설정" aria-label="설정"></button>
 </header>
@@ -371,9 +414,9 @@ input[type=text],input[type=date],input[type=time],input[type=password],textarea
 /* ===== 설정: config.js 파일이 없으면 여기에 직접 넣어도 돼요 ===== */
 const CFG = Object.assign({SUPABASE_URL:'', SUPABASE_ANON_KEY:'', VAPID_PUBLIC_KEY:'', CLOUDINARY_CLOUD_NAME:'', CLOUDINARY_UPLOAD_PRESET:''}, window.ARCHIVE_CONFIG||{});
 const DEMO = !CFG.SUPABASE_URL || !CFG.SUPABASE_ANON_KEY;
-const WHO = {jiwoo:'지우', yuna:'유나'};
+const WHO = {jiwoo:'언니', yuna:'애기'};
 const WD = ['일','월','화','수','목','금','토'];
-const OWN = {yuna:'유나', jiwoo:'지우', us:'우리'};
+const OWN = {yuna:'애기', jiwoo:'언니', us:'우리'};
 const $ = s => document.querySelector(s);
 const esc = s => String(s??'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const pad = n => String(n).padStart(2,'0');
@@ -447,7 +490,7 @@ const LocalAPI = {
     const ago = m => new Date(Date.now() - m*60000).toISOString(); const now = ago(600);
     this.db.events = [
       {id:'e1', owner:'jiwoo', created_by:'jiwoo', title:'치과 예약', all_day:false, start_date:d(0), start_time:'11:00', end_date:d(0), end_time:'12:00', memo:'', created_at:now},
-      {id:'e2', owner:'yuna', created_by:'yuna', title:'유나 스터디', all_day:false, start_date:d(2), start_time:'19:30', end_date:d(2), end_time:'21:00', memo:'', created_at:ago(240)},
+      {id:'e2', owner:'yuna', created_by:'yuna', title:'애기 스터디', all_day:false, start_date:d(2), start_time:'19:30', end_date:d(2), end_time:'21:00', memo:'', created_at:ago(240)},
       {id:'e3', owner:'jiwoo', created_by:'jiwoo', title:'부산 여행', all_day:true, start_date:d(6), start_time:'', end_date:d(8), end_time:'', memo:'', created_at:now},
       {id:'e4', owner:'us', created_by:'yuna', title:'같이 영화 보기', all_day:false, start_date:d(4), start_time:'20:00', end_date:d(4), end_time:'22:30', memo:'', created_at:ago(120)}];
     this.db.echats = [{id:'c0', event_id:'e2', author:'yuna', body:'끝나고 연락할게', created_at:ago(240)},{id:'c00', event_id:'e3', author:'jiwoo', body:'KTX 9시 출발', created_at:now},{id:'c1', event_id:'e3', author:'yuna', body:'숙소 바다 보이는 데로 하자!', created_at:ago(90)},{id:'c2', event_id:'e3', author:'jiwoo', body:'좋아 찾아볼게', created_at:ago(80)}];
@@ -531,7 +574,7 @@ function renderCal(){ const y = S.month.getFullYear(), mo = S.month.getMonth(); 
     cells += `<button class="day${d.getMonth()!==mo?' out':''}${k===today?' today':''}${k===S.sel?' sel':''}" data-day="${k}" aria-label="${kdate(k)} 일정 ${L.length}개"><span class="dn">${d.getDate()}</span>`+
       L.slice(0,3).map(x => x.t==='ev' ? `<span class="pill ${x.e.owner}">${esc(x.e.title)}</span>` : `<span class="pill memory">${esc(x.x.title)}</span>`).join('')+
       (L.length>3 ? `<span class="more">+${L.length-3}</span>` : '')+`</button>`; }
-  const F = [['all','전체',''],['yuna','유나','var(--y)'],['jiwoo','지우','var(--j)'],['memory','우리','var(--m)']];
+  const F = [['all','전체',''],['yuna','애기','var(--y)'],['jiwoo','언니','var(--j)'],['memory','우리','var(--m)']];
   const sd = parse(S.sel); const L = m[S.sel]||[];
   const agenda = L.length ? L.map(x => x.t==='ev'
       ? `<button class="item ${x.e.owner}" data-ev="${x.e.id}"><span class="bar"></span><span style="flex:1"><b>${esc(x.e.title)}</b><small>${esc(timeText(x.e))} · ${OWN[x.e.owner]||''}${chatCount(x.e.id)}</small></span></button>`
@@ -544,21 +587,36 @@ function renderCal(){ const y = S.month.getFullYear(), mo = S.month.getMonth(); 
     <aside class="agenda"><h3>${sd.getMonth()+1}월 ${sd.getDate()}일 ${WD[sd.getDay()]}요일</h3>${agenda}</aside></section>`; }
 const chatCount = id => { const n = S.echats.filter(c=>c.event_id===id).length; return n ? ` · 댓글 ${n}` : ''; };
 
+
+/* 시간 직접 입력: 1930 → 19:30, 9 → 09:00, 930 → 09:30 */
+function normTime(v){ v = (v||'').trim(); if(!v) return ''; 
+  let h, mi; const d = v.replace(/\D/g,'');
+  if(d.length===3){ h = +d[0]; mi = +d.slice(1); } else if(d.length===4){ h = +d.slice(0,2); mi = +d.slice(2); } else if(d.length && d.length<=2){ h = +d; mi = 0; } else return null;
+  if(h>24 || mi>59 || (h===24 && mi>0)) return null; if(h===24) h = 0;
+  return String(h).padStart(2,'0') + ':' + String(mi).padStart(2,'0'); }
+function timeInput(el){
+  el.addEventListener('focus', () => setTimeout(() => el.select(), 0));
+  el.addEventListener('input', () => { el.classList.remove('bad'); const d = el.value.replace(/\D/g,'').slice(0,4);
+    el.value = d.length>2 ? d.slice(0,2)+':'+d.slice(2) : d; });
+  el.addEventListener('blur', () => { const v = normTime(el.value); if(v===null) el.classList.add('bad'); else el.value = v; });
+  el.addEventListener('keydown', e => { if(e.key==='Enter'){ e.preventDefault(); el.blur(); } }); }
 function eventForm(e){ const isNew = !e; e = e || {owner:S.me, title:'', all_day:false, start_date:S.sel, start_time:'10:00', end_date:S.sel, end_time:'11:00', memo:''};
   let owner = e.owner;
   openSheet(`<div class="sh"><h3>${isNew?'새 일정':'일정 수정'}</h3><button class="ib cx" data-close aria-label="닫기"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
   <form class="sb" id="evf"><div class="field"><span>누구의 일정이에요?</span><div class="seg">${['yuna','jiwoo','us'].map(w=>`<button type="button" class="${w}${owner===w?' on':''}" data-own="${w}">${w==='us'?'<span class="dots"><i></i><i></i></span>':av(w)}${OWN[w]} 일정</button>`).join('')}</div></div>
   <label class="field"><span>제목</span><input type="text" name="title" value="${esc(e.title)}" required maxlength="120" placeholder="예: 저녁 약속"></label>
   <label class="check"><input type="checkbox" name="all_day" ${e.all_day?'checked':''}> 하루 종일</label>
-  <div class="row"><label class="field"><span>시작 날짜</span><input type="date" name="start_date" value="${e.start_date}" required></label><label class="field tm"><span>시작 시간</span><input type="time" name="start_time" value="${e.start_time||''}"></label></div>
-  <div class="row"><label class="field"><span>끝나는 날짜</span><input type="date" name="end_date" value="${e.end_date||e.start_date}"></label><label class="field tm"><span>끝나는 시간</span><input type="time" name="end_time" value="${e.end_time||''}"></label></div>
+  <div class="row dtr"><label class="field"><span>시작 날짜</span><input type="date" name="start_date" value="${e.start_date}" required></label><label class="field tm"><span>시작 시간</span><input type="text" class="tmi" name="start_time" inputmode="numeric" autocomplete="off" maxlength="5" placeholder="10:00" value="${e.start_time||''}"></label></div>
+  <div class="row dtr"><label class="field"><span>끝나는 날짜</span><input type="date" name="end_date" value="${e.end_date||e.start_date}"></label><label class="field tm"><span>끝나는 시간</span><input type="text" class="tmi" name="end_time" inputmode="numeric" autocomplete="off" maxlength="5" placeholder="11:00" value="${e.end_time||''}"></label></div>
   ${isNew ? `<label class="field"><span>메모 (적으면 첫 댓글로 남아요)</span><textarea name="memo" maxlength="2000" placeholder="예: 끝나고 연락할게"></textarea></label>` : e.memo ? `<label class="field"><span>메모</span><textarea name="memo" maxlength="2000">${esc(e.memo)}</textarea></label>` : ''}</form>
   <div class="sf">${isNew?'':'<button class="btn danger" id="evdel" style="margin-inline-end:auto">삭제</button>'}<button class="btn" data-close>취소</button><button class="btn pri" id="evsave">저장</button></div>`);
   const f = $('#evf'); const sync = () => f.querySelectorAll('.tm').forEach(x => x.classList.toggle('hidden', f.all_day.checked)); sync();
   f.all_day.onchange = sync;
+  f.querySelectorAll('.tmi').forEach(timeInput);
   f.start_date.onchange = () => { if(!f.end_date.value || f.end_date.value < f.start_date.value) f.end_date.value = f.start_date.value; };
   f.querySelectorAll('[data-own]').forEach(b => b.onclick = () => { owner = b.dataset.own; f.querySelectorAll('[data-own]').forEach(x => x.classList.toggle('on', x===b)); });
   $('#evsave').onclick = async () => { if(!f.title.value.trim()){ f.title.focus(); return; }
+    if(!f.all_day.checked){ for(const t of [f.start_time, f.end_time]){ const v = normTime(t.value); if(v===null){ t.focus(); t.classList.add('bad'); toast('시간은 19:30처럼 적어 주세요'); return; } t.value = v; } }
     const end = f.end_date.value && f.end_date.value >= f.start_date.value ? f.end_date.value : f.start_date.value;
     const row = {...(isNew?{created_by:S.me}:{id:e.id}), owner, title:f.title.value.trim(), all_day:f.all_day.checked, start_date:f.start_date.value, end_date:end,
       start_time:f.all_day.checked?'':f.start_time.value, end_time:f.all_day.checked?'':f.end_time.value, ...(f.memo ? {memo:f.memo.value.trim()} : {})};
@@ -571,7 +629,7 @@ function eventForm(e){ const isNew = !e; e = e || {owner:S.me, title:'', all_day
 function openEvent(id){ const e = S.events.find(x=>x.id===id); if(!e) return; S.openEvent = id;
   openSheet(`<div class="sh"><h3>${OWN[e.owner]||''} 일정</h3><button class="btn" id="evedit">수정</button><button class="ib cx" data-close aria-label="닫기"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
   <div class="sb" id="evbody"><div class="evhead ${e.owner}"><h2>${esc(e.title)}</h2><div>${kdate(e.start_date)} · ${esc(timeText(e))}</div>${e.memo?`<p>${esc(e.memo)}</p>`:''}</div><div class="chat" id="chat"></div></div>
-  <form class="composer" id="evc"><div class="crow"><textarea placeholder="${WHO[S.me]}(으)로 댓글 남기기" maxlength="2000" rows="1"></textarea><button class="send">보내기</button></div></form>`, 'tall');
+  <form class="composer" id="evc"><div class="crow"><textarea placeholder="${WHO[S.me]}로 댓글 남기기" maxlength="2000" rows="1"></textarea><button class="send">보내기</button></div></form>`, 'tall');
   $('#evedit').onclick = () => { S.openEvent = null; eventForm(e); };
   const f = $('#evc'), ta = f.querySelector('textarea'); autoGrow(ta);
   enterToSend(ta, f);
@@ -683,7 +741,7 @@ function openPost(id, cmId){ const p = S.posts.find(x=>x.id===id); if(!p) return
     <div class="pb" id="pbody"><div class="pwrap"><div id="pmedia"></div><p class="cap">${esc(p.caption)}</p><div class="meta">${av(p.author)}<span>${WHO[p.author]} · ${stamp(p.created_at)}</span>${fname(p.folder_id)?`<span class="ftag">${esc(fname(p.folder_id))}</span>`:''}${p.memory_date?`<span class="tag">${kdate(p.memory_date)}</span>`:''}</div>
     <div class="cmts"><h3>댓글</h3><div id="clist"></div></div></div></div>`;
   $('#pmedia').innerHTML = mediaGrid(p.media); $('#pmedia').onclick = e => { const b = e.target.closest('[data-lb]'); if(b) lightbox(p.media, +b.dataset.lb, async (k, blob) => { const cur = S.posts.find(x=>x.id===p.id) || p; await replaceMedia('posts', cur, k, blob); openPost(p.id); }); };
-  const c = composer({placeholder:`${WHO[S.me]}(으)로 댓글 남기기`, reply:true, onSubmit: async ({body, media, memory_date}) => {
+  const c = composer({placeholder:`${WHO[S.me]}로 댓글 남기기`, reply:true, onSubmit: async ({body, media, memory_date}) => {
     await API.put('comments', {post_id:id, parent_id:S.replyTo, author:S.me, body, media, memory_date}); S.replyTo = null; c.setReply(null); await refresh(); }});
   el.append(c); el.composer = c;
   $('#pback').onclick = closePost;
@@ -780,12 +838,20 @@ function applyLook(){ const pr = S.profiles?.[S.me] || {}; const skin = pr.skin 
   const m = document.querySelector('meta[name=theme-color]'); if(m) m.content = getComputedStyle(document.body).backgroundColor; return {skin, mode}; }
 async function setProfile(patch){ S.profiles[S.me] = {...(S.profiles[S.me]||{}), ...patch}; applyLook(); render();
   try{ await API.saveProfile(S.me, patch); } catch(e){ console.error(e); toast('설정을 저장하지 못했어요'); } }
+
+function storageStat(){ let img = 0, vid = 0; const add = L => (L||[]).forEach(m => m.kind==='video' ? vid++ : img++);
+  S.posts.forEach(p => add(p.media)); S.comments.forEach(c => add(c.media));
+  const used = img + vid*30, pct = Math.min(100, used/10000*100);
+  return `<div class="stor"><b>사진 ${img.toLocaleString()}장${vid?` · 동영상 ${vid}개`:''}</b><span>넉넉히 1만 장까지</span></div>
+    <div class="sbar"><i style="width:${Math.max(pct, used?1:0)}%"></i></div>
+    <p class="hint">무료 한도는 저장과 보기에 같이 쓰여서, 여유 있게 사진 1만 장 정도로 잡았어요. 동영상은 사진 30장 정도로 쳤어요. 정확한 사용량은 Cloudinary 첫 화면에서 볼 수 있어요.</p>`; }
 function openSettings(){ if(!S.me) return whoGate(); const pr = S.profiles[S.me] || {}; const {skin, mode} = applyLook();
   openSheet(`<div class="sh"><h3>설정</h3><button class="ib cx" data-close aria-label="닫기"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div><div class="sb" id="setb">
     <div class="sec"><h4>이 기기에서 기록하는 사람</h4><div class="seg">${['yuna','jiwoo'].map(w=>`<button type="button" class="${w}${S.me===w?' on':''}" data-me="${w}">${av(w)}${WHO[w]}</button>`).join('')}</div></div>
     <div class="sec"><h4>내 프로필 사진</h4><div class="prof">${av(S.me,'big')}<div class="row" style="flex:1"><button class="btn pri" data-act="avset">사진 고르기</button>${pr.avatar?'<button class="btn" data-act="avdel">기본으로</button>':''}</div></div></div>
     <div class="sec"><h4>테마</h4><div class="skins">${SKINS.map(([k,t,a,b])=>`<button data-sk="${k}" class="${k===skin?'on':''}"><i style="background:linear-gradient(90deg,${a} 0 55%,${b} 55%)"></i>${t}</button>`).join('')}</div></div>
     <div class="sec"><h4>화면</h4><div class="modes">${[['auto','자동'],['light','밝게'],['dark','어둡게']].map(([k,t])=>`<button data-md="${k}" class="${k===mode?'on':''}">${t}</button>`).join('')}</div></div>
+    <div class="sec"><h4>사진 저장 공간</h4>${storageStat()}</div>
     <div class="sec"><h4>가져오기</h4><div class="row" style="flex-wrap:wrap"><button class="btn" data-act="notion">노션에서 가져오기</button><button class="btn" data-act="ics">캘린더 파일(.ics) 가져오기</button></div></div>
     <p style="color:var(--sub);font-size:14px;margin:0">프로필 사진, 테마, 화면 설정은 ${WHO[S.me]}가 쓰는 모든 기기에 똑같이 적용돼요.</p></div>`);
   $('#setb').onclick = async e => { const b = e.target.closest('button'); if(!b) return;
@@ -1049,44 +1115,71 @@ async function runNotion(file){ const prog = $('#niprog'), go = $('#nigo'); cons
   } catch(e){ console.error(e); say('가져오지 못했어요. 중간까지 가져온 기록은 남아 있어요. 다시 누르면 이어서 가져와요.'); go.disabled = false; }
 }
 
-/* ===== 영상 (영화·드라마) ===== */
-async function fetchTmdb(title, year){ if(DEMO) return null;
-  try{ const r = await fetch(CFG.SUPABASE_URL.replace(/\/$/,'') + '/functions/v1/push', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({tmdb:{title, year}})});
+/* ===== 영상 (영화·드라마·예능) ===== */
+async function fetchTmdb(title, year, type){ if(DEMO) return null;
+  try{ const r = await fetch(CFG.SUPABASE_URL.replace(/\/$/,'') + '/functions/v1/push', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({tmdb:{title, year, type}})});
     const j = await r.json(); return r.ok && j.id ? j : null; } catch(e){ return null; } }
-const Movies = { edit:false, busy:false,
+const KIND = {movie:'영화', tv:'드라마', show:'예능'};
+const tmdbUrl = m => m.tmdb_id ? `https://www.themoviedb.org/${m.kind==='movie' || (!m.kind) ? 'movie' : 'tv'}/${m.tmdb_id}` : `https://www.themoviedb.org/search?query=${encodeURIComponent(m.title||'')}`;
+const Movies = { edit:false, busy:false, mode:'cal', month:null, sel:null,
   async fill(){ if(DEMO || this.busy) return; const todo = S.movies.filter(m => !m.meta_tried).slice(0, 30); if(!todo.length) return; this.busy = true;
-    let i = 0; const worker = async () => { while(i < todo.length){ const m = todo[i++]; const j = await fetchTmdb(m.title, m.year);
-      const patch = {id:m.id, meta_tried:true, ...(j ? {tmdb_id:j.id, kind:j.kind || 'movie', poster:j.poster || null, ...(m.year ? {} : {year:j.year})} : {})};
-      try{ await API.put('movies', patch); Object.assign(m, patch); } catch(e){ console.error(e); }
-      if(S.view==='movies'){ const r = document.querySelector(`.mvrow[data-mv="${m.id}"]`); if(r) r.outerHTML = this.row(m); } } };
-    await Promise.all([worker(), worker(), worker()]); this.busy = false; if(S.movies.some(m => !m.meta_tried)) this.fill(); },
-  row(m){ return `<div class="mvrow" data-mv="${m.id}"><div class="mvp">${m.poster ? `<img src="${esc(m.poster)}" alt="" loading="lazy">` : `<span>${esc((m.title||'?').slice(0,1))}</span>`}</div>
-    <div class="mvt"><b>${esc(m.title)}</b><small>${m.kind==='tv' ? '드라마' : '영화'}${m.year ? ` · ${m.year}` : ''}</small></div>
-    <div class="mvb">${m.tmdb_id ? `<a class="mvc tm" href="https://www.themoviedb.org/${m.kind==='tv' ? 'tv' : 'movie'}/${m.tmdb_id}" target="_blank" rel="noopener">TMDB</a>` : ''}<button class="mvc" data-mved="${m.id}">수정</button></div></div>`; },
-  render(){ const dated = S.movies.filter(m => m.watched_on).sort((a,b) => b.watched_on.localeCompare(a.watched_on) || a.title.localeCompare(b.title));
+    let i = 0; const worker = async () => { while(i < todo.length){ const m = todo[i++]; const j = await fetchTmdb(m.title, m.year, m.kind==='movie' ? 'movie' : m.kind ? 'tv' : '');
+      const patch = {id:m.id, meta_tried:true, ...(j ? {tmdb_id:j.id, kind:m.kind || j.kind || 'movie', poster:j.poster || null, ...(m.year ? {} : {year:j.year})} : {})};
+      try{ await API.put('movies', patch); Object.assign(m, patch); } catch(e){ console.error(e); } } };
+    await Promise.all([worker(), worker(), worker()]); this.busy = false; if(S.view==='movies') this.render(); if(S.movies.some(m => !m.meta_tried)) this.fill(); },
+  poster(m, cls='mvp'){ return `<div class="${cls}">${m.poster ? `<img src="${esc(m.poster)}" alt="" loading="lazy">` : `<span>${esc(m.title||'?')}</span>`}</div>`; },
+  row(m){ return `<div class="mvrow" data-mv="${m.id}"><a class="mvlink" href="${tmdbUrl(m)}" target="_blank" rel="noopener">${this.poster(m)}
+    <div class="mvt"><b>${esc(m.title)}</b><small>${KIND[m.kind] || '영화'}${m.year ? ` · ${m.year}` : ''}</small></div></a>
+    <div class="mvb"><button class="mvc" data-mved="${m.id}">수정</button></div></div>`; },
+  dayList(day, L){ const d = parse(day); return `<section class="mvday"><div class="mvdh"><b>${d.getMonth()+1}월 ${d.getDate()}일</b><span>${WD[d.getDay()]}요일</span></div><div class="mvds">${L.length} 작품 감상했어요.</div>${L.map(m => this.row(m)).join('')}</section>`; },
+  listHTML(){ const dated = S.movies.filter(m => m.watched_on).sort((a,b) => b.watched_on.localeCompare(a.watched_on) || a.title.localeCompare(b.title));
     const undated = S.movies.filter(m => !m.watched_on).sort((a,b) => (b.year||0) - (a.year||0) || a.title.localeCompare(b.title));
     let h = '', i = 0, mon = '';
     while(i < dated.length){ const day = dated[i].watched_on; let j = i; while(j < dated.length && dated[j].watched_on === day) j++;
-      const d = parse(day); const ym = day.slice(0,7);
-      if(ym !== mon){ h += `<div class="mvmon">${d.getFullYear()}년 ${d.getMonth()+1}월</div>`; mon = ym; }
-      h += `<section class="mvday"><div class="mvdh"><b>${d.getMonth()+1}월 ${d.getDate()}일</b><span>${WD[d.getDay()]}요일</span></div><div class="mvds">${j-i} 작품 감상했어요.</div>${dated.slice(i,j).map(m => this.row(m)).join('')}</section>`; i = j; }
+      const ym = day.slice(0,7); if(ym !== mon){ const d = parse(day); h += `<div class="mvmon">${d.getFullYear()}년 ${d.getMonth()+1}월</div>`; mon = ym; }
+      h += this.dayList(day, dated.slice(i,j)); i = j; }
     if(undated.length) h += `<section class="mvday"><div class="mvdh"><b>날짜 미정</b></div><div class="mvds">${undated.length} 작품 · 본 날짜를 알면 수정에서 넣어 주세요.</div>${undated.map(m => this.row(m)).join('')}</section>`;
-    $('#main').innerHTML = `<section class="mvwrap"><div class="albhead"><h2>영상 <small class="mcount">${S.movies.length}편</small></h2><button class="btn pri" data-mvadd="1">+ 영상</button></div>
-      ${S.movies.length ? h : '<div class="empty">같이 본 영화나 드라마를 기록해 보세요</div>'}</section>`;
+    return h; },
+  calHTML(){ if(!this.month){ const last = S.movies.filter(m=>m.watched_on).map(m=>m.watched_on).sort().pop(); const d = last ? parse(last) : new Date(); this.month = new Date(d.getFullYear(), d.getMonth(), 1); }
+    const y = this.month.getFullYear(), mo = this.month.getMonth(), pre = `${y}-${String(mo+1).padStart(2,'0')}-`;
+    const by = {}; S.movies.filter(m => m.watched_on?.startsWith(pre)).sort((a,b) => (a.created_at||'').localeCompare(b.created_at||'')).forEach(m => (by[m.watched_on] ||= []).push(m));
+    const days = Object.keys(by).sort(), total = days.reduce((n,k) => n + by[k].length, 0);
+    if(!this.sel || !this.sel.startsWith(pre) || !by[this.sel]) this.sel = days[days.length-1] || null;
+    const first = new Date(y, mo, 1).getDay(), n = new Date(y, mo+1, 0).getDate(); let cells = '';
+    for(let k=0; k<first; k++) cells += '<div class="mcd blank"></div>';
+    for(let dd=1; dd<=n; dd++){ const key = pre + String(dd).padStart(2,'0'), L = by[key];
+      cells += L ? `<button class="mcd has${key===this.sel?' on':''}" data-mvday="${key}">${this.poster(L[0], 'mcp')}${L.length>1?`<i class="mcn">${L.length}</i>`:''}<em>${dd}</em></button>`
+                 : `<div class="mcd"><span>${dd}</span></div>`; }
+    return `<div class="mchead"><button class="mca" data-mvm="-1" aria-label="이전 달">◀</button><b>${String(y).slice(2)}.${String(mo+1).padStart(2,'0')} 캘린더</b><button class="mca" data-mvm="1" aria-label="다음 달">▶</button></div>
+      <div class="mcsub"><b>${total}편</b> · ${days.length}일 감상</div>
+      <div class="mcgrid">${WD.map(w=>`<div class="mcw">${w}</div>`).join('')}${cells}</div>
+      ${this.sel ? this.dayList(this.sel, by[this.sel]) : '<div class="empty">이 달에는 본 영상이 없어요</div>'}`; },
+  render(){ const cal = this.mode==='cal';
+    $('#main').innerHTML = `<section class="mvwrap"><div class="albhead"><h2>영상 <small class="mcount">${S.movies.length}편</small></h2>
+      <div class="mvtop"><div class="mvsw"><button class="${cal?'on':''}" data-mvmode="cal">달력</button><button class="${cal?'':'on'}" data-mvmode="list">목록</button></div><button class="btn pri" data-mvadd="1">+ 영상</button></div></div>
+      ${S.movies.length ? (cal ? this.calHTML() : this.listHTML()) : '<div class="empty">같이 본 영화, 드라마, 예능을 기록해 보세요</div>'}</section>`;
+    const root = $('#main').querySelector('.mvwrap');
+    root.onclick = e => { const b = e.target.closest('[data-mvmode],[data-mvm],[data-mvday]'); if(!b) return; e.stopPropagation();
+      if(b.dataset.mvmode){ this.mode = b.dataset.mvmode; this.render(); }
+      else if(b.dataset.mvm){ this.month = new Date(this.month.getFullYear(), this.month.getMonth() + +b.dataset.mvm, 1); this.sel = null; this.render(); }
+      else { this.sel = b.dataset.mvday; this.render(); $('#main').querySelector('.mvday')?.scrollIntoView({behavior:'smooth', block:'nearest'}); } };
     this.fill(); },
-  form(m){ const isNew = !m; m = m || {title:'', year:'', watched_on:ymd(new Date())};
+  form(m){ const isNew = !m; m = m || {title:'', year:'', kind:'movie', watched_on:ymd(new Date())}; let kind = m.kind || 'movie';
     openSheet(`<div class="sh"><h3>${isNew ? '영상 기록' : '영상 수정'}</h3><button class="ib cx" data-close aria-label="닫기"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
-    <form class="sb" id="mvf"><label class="field"><span>제목</span><input type="text" name="title" maxlength="200" value="${esc(m.title)}" placeholder="예: 프랙티컬 매직, 장난스런 키스" required></label>
-      <div class="row"><label class="field"><span>개봉 연도</span><input type="text" name="year" inputmode="numeric" maxlength="4" value="${m.year||''}" placeholder="모르면 비워 두세요"></label>
-      <label class="field"><span>본 날짜</span><input type="date" name="watched_on" value="${m.watched_on||''}"></label></div>
-      <p style="margin:0;color:var(--sub);font-size:14px">본 날짜를 비워 두면 '날짜 미정'에 들어가요. 포스터는 TMDB에서 자동으로 찾아요.</p></form>
+    <form class="sb" id="mvf"><div class="field"><span>종류</span><div class="seg">${Object.entries(KIND).map(([k,t]) => `<button type="button" data-kd="${k}" class="${k===kind?'on':''}">${t}</button>`).join('')}</div></div>
+      <label class="field"><span>제목</span><input type="text" name="title" maxlength="200" value="${esc(m.title)}" placeholder="예: 프랙티컬 매직, 장난스런 키스, 나 혼자 산다" required></label>
+      <div class="row dtr"><label class="field"><span>본 날짜</span><input type="date" name="watched_on" value="${m.watched_on||''}"></label>
+      <label class="field tm"><span>연도</span><input type="text" name="year" inputmode="numeric" maxlength="4" value="${m.year||''}" placeholder="몰라도 돼요"></label></div>
+      <p style="margin:0;color:var(--sub);font-size:14px">본 날짜를 비워 두면 목록의 '날짜 미정'에 들어가요. 포스터는 TMDB에서 자동으로 찾아요.</p></form>
     <div class="sf">${isNew ? '' : '<button class="btn danger" id="mvdel" style="margin-inline-end:auto">삭제</button>'}<button class="btn" data-close>취소</button><button class="btn pri" id="mvsave">저장</button></div>`);
     const f = $('#mvf'); f.onsubmit = e => { e.preventDefault(); $('#mvsave').click(); };
+    f.querySelectorAll('[data-kd]').forEach(b => b.onclick = () => { kind = b.dataset.kd; f.querySelectorAll('[data-kd]').forEach(x => x.classList.toggle('on', x===b)); });
     $('#mvsave').onclick = async () => { const title = f.title.value.trim(); if(!title){ f.title.focus(); return; }
       const year = parseInt(f.year.value, 10) || null, watched_on = f.watched_on.value || null; const b = $('#mvsave'); b.disabled = true; b.textContent = '저장 중…';
-      const changed = isNew || title !== m.title || year !== (m.year||null);
-      let meta = {}; if(changed){ const j = await fetchTmdb(title, year); meta = j ? {tmdb_id:j.id, kind:j.kind || 'movie', poster:j.poster || null, year:year || j.year} : {tmdb_id:null, poster:null}; meta.meta_tried = true; }
-      try{ await API.put('movies', {...(isNew ? {added_by:S.me} : {id:m.id}), title, year, watched_on, ...meta}); closeSheet(); await refresh(); toast('저장했어요'); }
+      const changed = isNew || title !== m.title || year !== (m.year||null) || kind !== (m.kind||'movie');
+      let meta = {}; if(changed){ const j = await fetchTmdb(title, year, kind==='movie' ? 'movie' : 'tv'); meta = j ? {tmdb_id:j.id, poster:j.poster || null, year:year || j.year} : {tmdb_id:null, poster:null}; meta.meta_tried = true; }
+      try{ await API.put('movies', {...(isNew ? {added_by:S.me} : {id:m.id}), title, year, kind, watched_on, ...meta}); if(watched_on){ const d = parse(watched_on); this.month = new Date(d.getFullYear(), d.getMonth(), 1); this.sel = watched_on; }
+        closeSheet(); await refresh(); toast('저장했어요'); }
       catch(e){ console.error(e); toast('저장하지 못했어요'); b.disabled = false; b.textContent = '저장'; } };
     if(!isNew) $('#mvdel').onclick = async () => { if(await ask(`'${m.title}' 기록을 지울까요?`)){ await API.del('movies', m.id); closeSheet(); refresh(); } }; }
 };
@@ -1209,7 +1302,7 @@ function enterToSend(ta, form){ ta.addEventListener('keydown', ev => {
 function autoGrow(ta){ ta.addEventListener('input', () => { ta.style.height = 'auto'; ta.style.height = Math.min(ta.scrollHeight, 140)+'px'; }); }
 function render(){ applyLook(); document.querySelectorAll('.tabs button').forEach(b => b.classList.toggle('on', b.dataset.v===S.view));
   const n = unread(); const nt = document.querySelector('.tabs [data-v=news]'); nt.innerHTML = '새소식' + (n ? `<span class="nb">${n>99?'99+':n}</span>` : '');
-  document.title = (n ? `(${n}) ` : '') + '유나 · 지우 아카이브'; try{ n ? navigator.setAppBadge?.(n) : navigator.clearAppBadge?.(); }catch(e){}
+  document.title = (n ? `(${n}) ` : '') + '애기 · 언니 아카이브'; try{ n ? navigator.setAppBadge?.(n) : navigator.clearAppBadge?.(); }catch(e){}
   $('#fab').classList.toggle('hidden', S.view==='news' || S.view==='draw');
   if(S.view!=='draw' && Draw.board) Draw.leave();
   $('#meBtn').innerHTML = S.me ? `${av(S.me)}<span class="lbl">${WHO[S.me]} · 설정</span>` : '<span>나는?</span>'; $('#fab').textContent = S.view==='cal' ? '+ 일정' : S.view==='music' ? '+ 음악' : S.view==='movies' ? '+ 영상' : '+ 새 글';
