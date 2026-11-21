@@ -435,6 +435,28 @@ input[type=text],input[type=date],input[type=time],input[type=password],textarea
 .cal .day{height:auto!important;-webkit-appearance:none;appearance:none;justify-content:flex-start}
 .cal .day>*{flex:none}
 @media(max-width:600px){.cal .day{min-height:82px!important;overflow:visible}.cal .more{font-size:10px;line-height:13px;padding-left:3px;color:var(--sub);font-weight:500}}
+
+/* 사진첩 글 옆으로 넘기기 */
+#pbody{touch-action:pan-y}
+.pnav{display:flex;align-items:center;gap:4px;margin-inline-start:auto;font-size:12.5px;color:var(--sub);font-variant-numeric:tabular-nums}
+.pnav .ib{width:32px;height:32px;font-size:18px}.pnav .ib:disabled{opacity:.3}
+.sin-r{animation:sinr .2s ease-out}.sin-l{animation:sinl .2s ease-out}
+@keyframes sinr{from{transform:translateX(30%);opacity:0}}@keyframes sinl{from{transform:translateX(-30%);opacity:0}}
+
+/* 프로필 보기 */
+.cm .av,.msg .av,.meta .av,.pfn{cursor:pointer}.pfn{font-weight:inherit}
+.pfov{position:fixed;inset:0;z-index:80;background:#0006;display:grid;place-items:center;padding:20px;opacity:0;transition:opacity .16s;outline:0}
+.pfov.on{opacity:1}
+.pfcard{position:relative;width:min(320px,100%);background:var(--card);border-radius:22px;padding:30px 20px 22px;text-align:center;box-shadow:0 12px 40px #0004;transform:scale(.94);transition:transform .16s}
+.pfov.on .pfcard{transform:none}
+.pfcard .cx{position:absolute;top:10px;right:10px}
+.av.huge{width:132px!important;height:132px!important;font-size:52px!important;margin:0 auto 12px;border-width:4px!important;display:grid!important}
+.av.huge img{cursor:zoom-in}
+.pfcard h3{font-size:20px;margin:0 0 8px}
+.pfcard.yuna h3{color:var(--y)}.pfcard.jiwoo h3{color:color-mix(in srgb,var(--j) 80%,var(--ink))}
+.pfmsg{margin:0;font-size:14.5px;line-height:1.5;color:var(--ink);background:var(--soft);border-radius:12px;padding:10px 12px;word-break:keep-all}
+.pfmsg.none{color:var(--sub)}
+.pfst{display:flex;gap:6px}.pfst input{flex:1;min-width:0}
 </style>
 </head>
 <body>
@@ -719,12 +741,14 @@ function bindReact(box){ if(box._rx) return; box._rx = true; let t = null, sx = 
 /* ===== 사진첩 ===== */
 const cover = m => m ? `<div class="cover"><img src="${esc(m.thumb||m.url)}" alt="" loading="lazy">${m.kind==='video'?'<span class="play"></span>':''}</div>` : `<div class="cover"></div>`;
 const fname = id => S.folders.find(f=>f.id===id)?.name || '';
+function albumList(){ const inF = p => S.folder==='all' || (S.folder==='none' ? !fname(p.folder_id) : p.folder_id===S.folder);
+  return S.posts.filter(inF).sort((a,b) => (b.memory_date||b.created_at.slice(0,10)).localeCompare(a.memory_date||a.created_at.slice(0,10)) || b.created_at.localeCompare(a.created_at)); }
 function renderAlbum(){ if(S.folder!=='all' && S.folder!=='none' && !S.folders.some(f=>f.id===S.folder)) S.folder = 'all';
   const inF = p => S.folder==='all' || (S.folder==='none' ? !fname(p.folder_id) : p.folder_id===S.folder);
   const cnt = id => S.posts.filter(p => id==='none' ? !fname(p.folder_id) : p.folder_id===id).length, none = cnt('none');
   const chips = [['all','전체',S.posts.length], ...S.folders.map(f=>[f.id, f.name, cnt(f.id)]), ...(none?[['none','폴더 없음',none]]:[])]
     .map(([k,t,n]) => `<button class="chip${S.folder===k?' on':''}" data-fd="${k}">${esc(t)} <small>${n}</small></button>`).join('') + `<button class="chip add" data-fd="manage">폴더 관리</button>`;
-  const P = S.posts.filter(inF).sort((a,b) => (b.memory_date||b.created_at.slice(0,10)).localeCompare(a.memory_date||a.created_at.slice(0,10)) || b.created_at.localeCompare(a.created_at));
+  const P = albumList();
   $('#main').innerHTML = `<section><div class="albhead"><h2>사진첩</h2><button class="btn pri" data-add="post">+ 새 글</button></div><div class="filters folders">${chips}</div>
   ${P.length ? `<div class="posts">${P.map(p => { const n = S.comments.filter(c=>c.post_id===p.id).length; const m = p.media?.[0];
     return `<button class="card" data-post="${p.id}">${m ? cover(m).replace('</div>', (p.media?.length>1?`<span class="badge">${p.media.length}</span>`:'')+'</div>') : `<div class="cover txt"><span>${esc((p.caption||'').slice(0,160))}</span></div>`}<div class="cbody">${m ? `<p>${esc(p.caption)||'&nbsp;'}</p>` : ''}<div class="meta">${av(p.author)}${S.folder==='all'&&fname(p.folder_id)?`<span class="ftag">${esc(fname(p.folder_id))}</span>`:''}${p.memory_date?`<span class="tag">${kdate(p.memory_date)}</span>`:''}${n?`<span>댓글 ${n}</span>`:''}</div></div></button>`; }).join('')}</div>`
@@ -785,24 +809,41 @@ function postForm(p){ const isNew = !p;
 
 function mediaGrid(media, cls=''){ if(!media?.length) return ''; return `<div class="mg${media.length===1&&cls!=='small'?' one':''}">${media.map((m,i) =>
   `<button class="th" data-lb="${i}" aria-label="${m.kind==='video'?'동영상':'사진'} 크게 보기">${m.thumb||m.kind==='image' ? `<img src="${esc(media.length===1&&cls!=='small'&&m.kind==='image'?m.url:(m.thumb||m.url))}" alt="" loading="lazy">` : ''}${m.kind==='video'?'<span class="play"></span>':''}</button>`).join('')}</div>`; }
-function openPost(id, cmId){ const p = S.posts.find(x=>x.id===id); if(!p) return; S.openPost = id; S.replyTo = null; closeSheet();
+function openPost(id, cmId, dir){ const p = S.posts.find(x=>x.id===id); if(!p) return; S.openPost = id; S.replyTo = null; closeSheet();
+  let AL = albumList(); if(!AL.some(x=>x.id===id)) AL = [...S.posts].sort((a,b) => (b.memory_date||b.created_at.slice(0,10)).localeCompare(a.memory_date||a.created_at.slice(0,10)) || b.created_at.localeCompare(a.created_at)); const idx = AL.findIndex(x=>x.id===id), prevP = AL[idx-1], nextP = AL[idx+1];
   const el = $('#panel'); el.classList.remove('hidden'); document.body.style.overflow = 'hidden';
-  el.innerHTML = `<div class="ph"><button class="btn" id="pback">‹ 사진첩</button><button class="btn" id="pedit">수정</button><button class="btn danger" id="pdel">삭제</button></div>
-    <div class="pb" id="pbody"><div class="pwrap"><div id="pmedia"></div><p class="cap">${esc(p.caption)}</p><div class="meta">${av(p.author)}<span>${WHO[p.author]} · ${stamp(p.created_at)}</span>${fname(p.folder_id)?`<span class="ftag">${esc(fname(p.folder_id))}</span>`:''}${p.memory_date?`<span class="tag">${kdate(p.memory_date)}</span>`:''}</div>
+  el.innerHTML = `<div class="ph"><button class="btn" id="pback">‹ 사진첩</button><div class="pnav"><button class="ib" id="pprev" ${prevP?'':'disabled'} aria-label="이전 글">‹</button><span>${idx+1} / ${AL.length}</span><button class="ib" id="pnext" ${nextP?'':'disabled'} aria-label="다음 글">›</button></div><button class="btn" id="pedit">수정</button><button class="btn danger" id="pdel">삭제</button></div>
+    <div class="pb" id="pbody"><div class="pwrap"><div id="pmedia"></div><p class="cap">${esc(p.caption)}</p><div class="meta">${av(p.author)}<span><b class="pfn" data-pf="${p.author}">${WHO[p.author]}</b> · ${stamp(p.created_at)}</span>${fname(p.folder_id)?`<span class="ftag">${esc(fname(p.folder_id))}</span>`:''}${p.memory_date?`<span class="tag">${kdate(p.memory_date)}</span>`:''}</div>
     <div class="cmts"><h3>댓글</h3><div id="clist"></div></div></div></div>`;
   $('#pmedia').innerHTML = mediaGrid(p.media); $('#pmedia').onclick = e => { const b = e.target.closest('[data-lb]'); if(b) lightbox(p.media, +b.dataset.lb, async (k, blob) => { const cur = S.posts.find(x=>x.id===p.id) || p; await replaceMedia('posts', cur, k, blob); openPost(p.id); }); };
   const c = composer({placeholder:`${WHO[S.me]}로 댓글 남기기`, reply:true, onSubmit: async ({body, media, memory_date}) => {
     await API.put('comments', {post_id:id, parent_id:S.replyTo, author:S.me, body, media, memory_date}); S.replyTo = null; c.setReply(null); await refresh(); }});
   el.append(c); el.composer = c;
   $('#pback').onclick = closePost;
+  const goP = d => { const t = d>0 ? nextP : prevP; if(t) openPost(t.id, null, d); };
+  $('#pprev').onclick = () => goP(-1); $('#pnext').onclick = () => goP(1);
+  const body = $('#pbody'), wrap = body.querySelector('.pwrap'); if(dir) wrap.classList.add(dir>0 ? 'sin-r' : 'sin-l');
+  let sx = 0, sy = 0, dx = 0, on = false, lock = null;
+  body.addEventListener('pointerdown', e => { if(e.pointerType==='mouse' && e.button!==0) return; if(e.target.closest('textarea,input,.composer,[data-rx]')) return; on = true; lock = null; sx = e.clientX; sy = e.clientY; dx = 0; });
+  body.addEventListener('pointermove', e => { if(!on) return; const mx = e.clientX - sx, my = e.clientY - sy;
+    if(lock===null && Math.hypot(mx,my) > 8) lock = Math.abs(mx) > Math.abs(my)*1.3 ? 'x' : 'y';
+    if(lock==='x'){ dx = mx; const edge = (dx>0 && !prevP) || (dx<0 && !nextP); wrap.style.transition = 'none'; wrap.style.transform = `translateX(${edge ? dx/4 : dx}px)`; wrap.style.opacity = 1 - Math.min(.35, Math.abs(dx)/900); } });
+  const end = () => { if(!on) return; on = false; if(lock!=='x'){ return; } const w = Math.min(innerWidth, 700);
+    if(dx < -w*0.18 && nextP){ wrap.style.transition = 'transform .16s ease-in, opacity .16s'; wrap.style.transform = 'translateX(-40%)'; wrap.style.opacity = 0; setTimeout(() => goP(1), 140); }
+    else if(dx > w*0.18 && prevP){ wrap.style.transition = 'transform .16s ease-in, opacity .16s'; wrap.style.transform = 'translateX(40%)'; wrap.style.opacity = 0; setTimeout(() => goP(-1), 140); }
+    else { wrap.style.transition = 'transform .2s ease-out, opacity .2s'; wrap.style.transform = ''; wrap.style.opacity = ''; } };
+  body.addEventListener('pointerup', end); body.addEventListener('pointercancel', end);
+  body.addEventListener('click', e => { if(lock==='x' && Math.abs(dx) > 8){ e.preventDefault(); e.stopPropagation(); lock = null; } }, true);
   $('#pedit').onclick = () => postForm(p);
   $('#pdel').onclick = async () => { if(await ask('이 글과 댓글, 사진을 모두 지울까요?')){ const cm = S.comments.filter(x=>x.post_id===id);
     await API.removeFiles([...(p.media||[]), ...cm.flatMap(x=>x.media||[])]); await API.del('posts', id); closePost(); refresh(); toast('지웠어요'); } };
   renderComments();
   if(cmId) setTimeout(() => document.getElementById('cm-'+cmId)?.scrollIntoView({block:'center'}), 50); }
+document.addEventListener('keydown', e => { if(!S.openPost || $('#panel').classList.contains('hidden') || e.target.closest?.('textarea,input') || document.querySelector('.lb:not(.hidden)') || !$('#modal')?.classList.contains('hidden') && $('#modal')) return;
+  if(e.key==='ArrowLeft') $('#pprev')?.click(); else if(e.key==='ArrowRight') $('#pnext')?.click(); });
 function closePost(){ S.openPost = null; $('#panel').classList.add('hidden'); $('#panel').innerHTML = ''; document.body.style.overflow = ''; }
 function renderComments(){ const box = $('#clist'); if(!box) return; const all = S.comments.filter(c=>c.post_id===S.openPost);
-  const one = c => `<div class="cm" id="cm-${c.id}">${av(c.author)}<div class="cc"><div class="who">${WHO[c.author]} <span class="meta" style="display:inline">${stamp(c.created_at)}</span> ${c.memory_date?`<span class="tag">${kdate(c.memory_date)}</span>`:''}</div>
+  const one = c => `<div class="cm" id="cm-${c.id}">${av(c.author)}<div class="cc"><div class="who"><b class="pfn" data-pf="${c.author}">${WHO[c.author]}</b> <span class="meta" style="display:inline">${stamp(c.created_at)}</span> ${c.memory_date?`<span class="tag">${kdate(c.memory_date)}</span>`:''}</div>
     <div class="rxa" data-rx="comments:${c.id}">${c.body?`<div class="txt">${esc(c.body)}</div>`:''}<div data-cmm="${c.id}">${mediaGrid(c.media,'small')}</div></div>${rxRow(c)}
     <div class="acts"><button data-reply="${c.parent_id||c.id}" data-name="${WHO[c.author]}">답글</button>${c.author===S.me?`<button data-cdel="${c.id}">삭제</button>`:''}</div></div></div>`;
   const tops = all.filter(c=>!c.parent_id);
@@ -895,10 +936,28 @@ function storageStat(){ let img = 0, vid = 0; const add = L => (L||[]).forEach(m
   return `<div class="stor"><b>사진 ${img.toLocaleString()}장${vid?` · 동영상 ${vid}개`:''}</b><span>넉넉히 1만 장까지</span></div>
     <div class="sbar"><i style="width:${Math.max(pct, used?1:0)}%"></i></div>
     <p class="hint">무료 한도는 저장과 보기에 같이 쓰여서, 여유 있게 사진 1만 장 정도로 잡았어요. 동영상은 사진 30장 정도로 쳤어요. 정확한 사용량은 Cloudinary 첫 화면에서 볼 수 있어요.</p>`; }
+/* 프로필 보기: 프로필 사진이나 이름을 누르면 */
+function showProfile(w){ document.querySelector('.pfov')?.remove(); const pr = S.profiles?.[w] || {}, me = w===S.me;
+  const ov = document.createElement('div'); ov.className = 'pfov'; ov.innerHTML = `<div class="pfcard ${w}" role="dialog" aria-label="${WHO[w]} 프로필">
+    <button class="ib cx" data-x aria-label="닫기"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+    ${av(w,'huge')}<h3>${WHO[w]}</h3>
+    ${me ? `<div class="pfst"><input type="text" maxlength="60" placeholder="상태 메시지를 적어 보세요" value="${esc(pr.status||'')}"><button class="btn pri" data-save>저장</button></div>`
+         : `<p class="pfmsg${pr.status?'':' none'}">${pr.status ? esc(pr.status) : '상태 메시지가 없어요'}</p>`}</div>`;
+  document.body.appendChild(ov); requestAnimationFrame(() => ov.classList.add('on'));
+  const close = () => { ov.classList.remove('on'); setTimeout(() => ov.remove(), 160); };
+  ov.onclick = async e => { if(e.target===ov || e.target.closest('[data-x]')) return close();
+    if(e.target.closest('[data-save]')){ await setProfile({status:ov.querySelector('input').value.trim()}); toast('상태 메시지를 바꿨어요'); close(); }
+    const img = e.target.closest('.av.huge img'); if(img){ close(); lightbox([{url:img.src, kind:'image'}], 0); } };
+  const inp = ov.querySelector('input'); if(inp) inp.onkeydown = e => { if(e.key==='Enter'){ e.preventDefault(); ov.querySelector('[data-save]').click(); } if(e.key==='Escape') close(); };
+  ov.tabIndex = -1; ov.focus(); ov.onkeydown = e => { if(e.key==='Escape') close(); }; }
+document.addEventListener('click', e => { const t = e.target.closest('[data-pf], .av'); if(!t) return;
+  if(t.closest('#meBtn,#gate,#setb,.seg,.pend,.nw,.prof,.pfov,.tabs,.rxpop,.brand,.item,.card,.lb')) return;
+  const w = t.dataset.pf || ['yuna','jiwoo'].find(k => t.classList.contains(k)); if(!w) return; e.preventDefault(); e.stopPropagation(); showProfile(w); }, true);
 function openSettings(){ if(!S.me) return whoGate(); const pr = S.profiles[S.me] || {}; const {skin, mode} = applyLook();
   openSheet(`<div class="sh"><h3>설정</h3><button class="ib cx" data-close aria-label="닫기"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div><div class="sb" id="setb">
     <div class="sec"><h4>이 기기에서 기록하는 사람</h4><div class="seg">${['yuna','jiwoo'].map(w=>`<button type="button" class="${w}${S.me===w?' on':''}" data-me="${w}">${av(w)}${WHO[w]}</button>`).join('')}</div></div>
     <div class="sec"><h4>내 프로필 사진</h4><div class="prof">${av(S.me,'big')}<div class="row" style="flex:1"><button class="btn pri" data-act="avset">사진 고르기</button>${pr.avatar?'<button class="btn" data-act="avdel">기본으로</button>':''}</div></div></div>
+    <div class="sec"><h4>상태 메시지</h4><div class="row"><input type="text" id="stin" maxlength="60" placeholder="예: 오늘은 먼지랑 낮잠 중" value="${esc(pr.status||'')}" style="flex:1"><button class="btn" data-act="stset">저장</button></div></div>
     <div class="sec"><h4>테마</h4><div class="skins">${SKINS.map(([k,t,a,b])=>`<button data-sk="${k}" class="${k===skin?'on':''}"><i style="background:linear-gradient(90deg,${a} 0 55%,${b} 55%)"></i>${t}</button>`).join('')}</div></div>
     <div class="sec"><h4>화면</h4><div class="modes">${[['auto','자동'],['light','밝게'],['dark','어둡게']].map(([k,t])=>`<button data-md="${k}" class="${k===mode?'on':''}">${t}</button>`).join('')}</div></div>
     <div class="sec"><h4>사진 저장 공간</h4>${storageStat()}</div>
@@ -906,6 +965,7 @@ function openSettings(){ if(!S.me) return whoGate(); const pr = S.profiles[S.me]
     <p style="color:var(--sub);font-size:14px;margin:0">프로필 사진, 테마, 화면 설정은 ${WHO[S.me]}가 쓰는 모든 기기에 똑같이 적용돼요.</p></div>`);
   $('#setb').onclick = async e => { const b = e.target.closest('button'); if(!b) return;
     if(b.dataset.me){ S.me = b.dataset.me; store.set('archive.me', S.me); S.known = activity()[0]?.at || ''; Push.save(); applyLook(); render(); if(S.openPost) openPost(S.openPost); openSettings(); }
+    else if(b.dataset.act==='stset'){ await setProfile({status:$('#stin').value.trim()}); toast('상태 메시지를 바꿨어요'); openSettings(); }
     else if(b.dataset.sk){ await setProfile({skin:b.dataset.sk}); openSettings(); }
     else if(b.dataset.md){ await setProfile({mode:b.dataset.md}); openSettings(); }
     else if(b.dataset.act==='notion') notionSheet();
