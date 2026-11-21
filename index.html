@@ -457,6 +457,15 @@ input[type=text],input[type=date],input[type=time],input[type=password],textarea
 .pfmsg{margin:0;font-size:14.5px;line-height:1.5;color:var(--ink);background:var(--soft);border-radius:12px;padding:10px 12px;word-break:keep-all}
 .pfmsg.none{color:var(--sub)}
 .pfst{display:flex;gap:6px}.pfst input{flex:1;min-width:0}
+
+/* 음악 검색 · 중복 알림 */
+.msearch{position:relative;margin:0 0 12px}.msearch input{width:100%;padding-right:52px}
+.msearch span{position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:12px;color:var(--sub)}
+.mcard[hidden]{display:none!important}
+.msim{display:grid;gap:7px;padding:11px;border-radius:12px;background:var(--soft);color:var(--ink);font-size:13.5px;text-align:left}
+.msim>b{color:#c2414f}.msim small{color:var(--sub);font-size:12px;display:block}
+.msim a{display:flex;gap:9px;align-items:center;color:inherit;text-decoration:none;background:var(--card);border-radius:9px;padding:6px}
+.msim a img{width:48px;height:36px;object-fit:cover;border-radius:5px;background:var(--line);flex:none}.msim a span{min-width:0;line-height:1.35}
 </style>
 </head>
 <body>
@@ -1137,14 +1146,23 @@ const ytThumb = k => k.startsWith('yt:') ? `https://i.ytimg.com/vi/${k.slice(3)}
 async function fetchMeta(url){ if(DEMO) return null;
   try{ const r = await fetch(CFG.SUPABASE_URL.replace(/\/$/,'') + '/functions/v1/push', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({meta:url})});
     const j = await r.json(); return r.ok && j.title ? j : null; } catch(e){ return null; } }
-const Music = { edit:false, busy:false,
+/* 노래 제목 비교용: 괄호·MV·official 같은 군더더기를 빼고 글자만 남겨요 */
+const songKey = t => (t||'').toLowerCase().normalize('NFC')
+  .replace(/\b(official|music|video|lyrics?|audio|visualizer|performance|live|clip|teaser|m\/?v|ver(sion)?|feat\.?|ft\.?|prod\.?|by|on spotify|spotify|youtube)\b/g, ' ')
+  .replace(/(뮤직비디오|공식|가사|라이브|직캠|음원)/g, ' ').replace(/[^\p{L}\p{N}]+/gu, '');
+const songWords = t => (t||'').toLowerCase().replace(/[\[\(（【][^\]\)）】]*[\]\)）】]/g, ' ').split(/[\s\-–—|·:'"‘’“”/]+/).map(songKey).filter(w => w.length >= 2);
+function similarSongs(title){ const k = songKey(title); if(k.length < 2) return [];
+  return S.music.filter(m => { const mk = songKey(m.title); if(!mk) return false; if(mk===k) return true;
+    const a = k.length <= mk.length ? k : mk, b = a===k ? mk : k; if(a.length >= 3 && b.includes(a)) return true;
+    const w1 = songWords(title), w2 = new Set(songWords(m.title)); const hit = w1.filter(w => w.length >= 3 && w2.has(w)); return hit.length && hit.length >= Math.min(2, w1.length); }); }
+const Music = { edit:false, busy:false, q:'',
   async fill(){ if(DEMO || this.busy) return; const todo = S.music.filter(m => !m.title && !m.meta_tried).slice(0, 40); if(!todo.length) return; this.busy = true;
     let i = 0; const worker = async () => { while(i < todo.length){ const m = todo[i++]; const j = await fetchMeta(m.url);
       const patch = {id:m.id, meta_tried:true, ...(j ? {title:j.title.slice(0,200), thumb:j.thumb || m.thumb || ytThumb(m.mkey)} : {})};
       try{ await API.put('music', patch); Object.assign(m, patch); } catch(e){ console.error(e); }
       if(S.view==='music') this.patchCard(m); } };
     await Promise.all([worker(), worker(), worker(), worker()]); this.busy = false; if(S.music.some(m => !m.title && !m.meta_tried)) this.fill(); },
-  patchCard(m){ const c = document.querySelector(`.mcard[data-mid="${m.id}"]`); if(c) c.outerHTML = this.card(m); },
+  patchCard(m){ const c = document.querySelector(`.mcard[data-mid="${m.id}"]`); if(c){ c.outerHTML = this.card(m); if(this.q) this.filter(); } },
   card(m){ const th = m.thumb || ytThumb(m.mkey); const t = m.title || (m.meta_tried ? (m.platform==='yt' ? '유튜브 영상' : '스포티파이') : '제목 불러오는 중…');
     return `<div class="mcard" data-mid="${m.id}"><a href="${esc(m.url)}" target="_blank" rel="noopener" class="mlink">
       <span class="mth ${m.platform}">${th ? `<img src="${esc(th)}" alt="" loading="lazy" referrerpolicy="no-referrer">` : ''}<i class="mpf ${m.platform}"></i></span>
@@ -1152,18 +1170,27 @@ const Music = { edit:false, busy:false,
       ${this.edit ? `<div class="medit"><button class="tbtn" data-mren="${m.id}">제목</button><button class="tbtn danger" data-mdel="${m.id}">삭제</button></div>` : ''}</div>`; },
   render(){ const L = [...S.music].sort((a,b) => (b.shared_at||b.created_at).localeCompare(a.shared_at||a.created_at));
     $('#main').innerHTML = `<section><div class="albhead"><h2>음악 <small class="mcount">${L.length}곡</small></h2><button class="btn medbtn${this.edit?' on':''}" data-mus="edit">${this.edit?'완료':'편집'}</button><button class="btn pri" data-mus="add">+ 음악</button></div>
+      ${L.length ? `<div class="msearch"><input type="search" id="mq" placeholder="노래 제목으로 찾기" value="${esc(this.q)}" autocomplete="off"><span id="mqn"></span></div>` : ''}
       ${L.length ? `<div class="mgrid">${L.map(m => this.card(m)).join('')}</div>` : '<div class="empty">유튜브나 스포티파이 링크를 붙여 넣어 첫 곡을 추가해 보세요</div>'}</section>`;
+    const q = $('#mq'); if(q){ q.oninput = () => { this.q = q.value; this.filter(); }; this.filter(); }
     this.fill(); },
+  filter(){ const k = songKey(this.q), raw = this.q.trim().toLowerCase(); let n = 0;
+    document.querySelectorAll('.mcard').forEach(c => { const m = S.music.find(x => x.id===c.dataset.mid); const t = m?.title || '';
+      const ok = !raw || songKey(t).includes(k) || t.toLowerCase().includes(raw) || (m?.url||'').includes(raw); c.hidden = !ok; if(ok) n++; });
+    const el = $('#mqn'); if(el) el.textContent = raw ? `${n}곡` : ''; },
   addSheet(){ openSheet(`<div class="sh"><h3>음악 추가</h3><button class="ib cx" data-close aria-label="닫기"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
     <form class="sb" id="maf"><label class="field"><span>유튜브나 스포티파이 링크</span><input type="text" id="murl" inputmode="url" autocomplete="off" placeholder="https://youtu.be/… 또는 https://open.spotify.com/…"></label><div class="err" id="merr"></div></form>
     <div class="sf"><button class="btn" data-close>취소</button><button class="btn pri" id="mgo">추가</button></div>`);
-    const f = $('#maf'), inp = $('#murl'); setTimeout(() => inp.focus(), 50);
+    const f = $('#maf'), inp = $('#murl'); setTimeout(() => inp.focus(), 50); inp.addEventListener('input', () => { delete f.dataset.ok; $('#mgo').textContent = '추가'; $('#merr').textContent = ''; });
     f.onsubmit = e => { e.preventDefault(); $('#mgo').click(); };
     $('#mgo').onclick = async () => { const raw = (inp.value.match(/https?:\/\/\S+/) || [''])[0].replace(/[.,!?]+$/, '');
       if(!/(youtube\.com|youtu\.be|spotify\.com|spotify\.link)\//i.test(raw)){ $('#merr').textContent = '유튜브나 스포티파이 링크를 넣어 주세요'; return; }
       const [mkey, platform] = mkeyOf(raw); if(S.music.some(m => m.mkey===mkey)){ $('#merr').textContent = '이미 있는 곡이에요'; return; }
       const b = $('#mgo'); b.disabled = true; b.textContent = '불러오는 중…';
       const j = await fetchMeta(raw);
+      const sim = j?.title ? similarSongs(j.title) : [];
+      if(sim.length && !f.dataset.ok){ b.disabled = false; b.textContent = '그래도 추가'; f.dataset.ok = '1';
+        $('#merr').innerHTML = `<div class="msim"><b>비슷한 곡이 이미 있어요</b><small>새로 넣는 곡: ${esc(j.title)}</small>${sim.slice(0,4).map(m => `<a href="${esc(m.url)}" target="_blank" rel="noopener"><img src="${esc(m.thumb||ytThumb(m.mkey)||'')}" alt="" referrerpolicy="no-referrer"><span>${esc(m.title)}<small>${m.platform==='yt'?'유튜브':'스포티파이'}${m.shared_at?` · ${kdate((m.shared_at||'').slice(0,10))}`:''}</small></span></a>`).join('')}<small>같은 곡이면 취소, 다른 곡이면 '그래도 추가'를 눌러 주세요.</small></div>`; return; }
       try{ await API.put('music', {mkey, url:raw, platform, title:j?.title?.slice(0,200) || null, thumb:j?.thumb || ytThumb(mkey) || null, meta_tried:true, shared_by:S.me, shared_at:new Date().toISOString()});
         closeSheet(); await refresh(); toast(j ? '추가했어요' : '추가했어요. 제목은 편집에서 적을 수 있어요'); }
       catch(err){ console.error(err); b.disabled = false; b.textContent = '추가'; $('#merr').textContent = '추가하지 못했어요'; } }; },
@@ -1173,7 +1200,7 @@ const Music = { edit:false, busy:false,
     $('#mrs').onclick = async () => { const t = $('#mtt').value.trim(); try{ await API.put('music', {id:m.id, title:t || null, meta_tried:true}); closeSheet(); await refresh(); } catch(e){ toast('저장하지 못했어요'); } }; }
 };
 function renderMusic(){ if($('.mgrid') && S.view==='music' && document.querySelector('[data-mus=edit]')?.textContent === (Music.edit?'완료':'편집') && $('.mcount')?.textContent === `${S.music.length}곡`){
-    for(const m of S.music){ const c = document.querySelector(`.mcard[data-mid="${m.id}"]`); if(c && c.outerHTML !== Music.card(m)) Music.patchCard(m); } return; }
+    for(const m of S.music){ const c = document.querySelector(`.mcard[data-mid="${m.id}"]`); if(c && c.outerHTML !== Music.card(m)) Music.patchCard(m); } Music.filter(); return; }
   Music.render(); }
 
 /* ===== 노션에서 가져오기 ===== */
