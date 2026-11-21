@@ -401,6 +401,14 @@ input[type=text],input[type=date],input[type=time],input[type=password],textarea
 .item.memory{background:color-mix(in srgb,var(--mbg) 50%,var(--card))}
 .chip.fc{color:var(--sub);opacity:.55}.chip.fc i{opacity:.5}
 .chip.fc.on{opacity:1;color:var(--ink);border-color:var(--ink);font-weight:500}.chip.fc.on i{opacity:1}
+
+/* 필터 작게 · 켜짐 테두리 연하게 */
+.filters .chip.on{border-color:color-mix(in srgb,var(--ink) 22%,var(--line));background:var(--card);box-shadow:0 1px 2px #0000000d}
+@media(max-width:600px){
+  .filters{gap:4px!important;margin-bottom:8px}
+  .filters .chip{min-height:26px!important;padding:0 8px!important;font-size:12px;gap:4px}
+  .filters .chip i{width:7px;height:7px}
+}
 </style>
 </head>
 <body>
