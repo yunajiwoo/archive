@@ -394,6 +394,13 @@ input[type=text],input[type=date],input[type=time],input[type=password],textarea
 .mvlink:active{opacity:.7}
 .mvp span{font-size:10px;padding:3px;text-align:center;color:var(--sub);line-height:1.2;overflow:hidden;max-height:100%;word-break:keep-all}
 @media(max-width:600px){.mcgrid{gap:3px}.mcd{font-size:12px}.mcd em{font-size:10px}.mcn{min-width:17px;height:17px;font-size:10px;top:-4px;right:-4px}.mvwrap .albhead h2 .mcount{display:none}}
+
+/* 추억(사진첩·영상) 더 연하게 · 필터 여러 개 */
+:root{--mlt:color-mix(in srgb,var(--m) 38%,var(--card))}
+.pill.memory,.cal .pill.memory{background:color-mix(in srgb,var(--mbg) 50%,var(--card))!important;color:color-mix(in srgb,var(--mink) 62%,var(--card))!important;border-left-color:var(--mlt)!important}
+.item.memory{background:color-mix(in srgb,var(--mbg) 50%,var(--card))}
+.chip.fc{color:var(--sub);opacity:.55}.chip.fc i{opacity:.5}
+.chip.fc.on{opacity:1;color:var(--ink);border-color:var(--ink);font-weight:500}.chip.fc.on i{opacity:1}
 </style>
 </head>
 <body>
@@ -431,7 +438,7 @@ const av = (w, cls='') => { const a = S.profiles?.[w]?.avatar; return a ? `<span
 const kdate = s => { const d = parse(s); return `${d.getFullYear()}년 ${d.getMonth()+1}월 ${d.getDate()}일`; };
 const stamp = iso => { const d = new Date(iso); return `${d.getMonth()+1}/${d.getDate()} ${pad(d.getHours())}:${pad(d.getMinutes())}`; };
 
-const S = { me: store.get('archive.me') || '', view:'cal', month:null, sel: ymd(new Date()), filter:'all',
+const S = { me: store.get('archive.me') || '', view:'cal', month:null, sel: ymd(new Date()), fl: (()=>{ try{ const v = JSON.parse(localStorage.getItem('archive.fl')); if(Array.isArray(v)) return new Set(v); }catch(e){} return new Set(['yuna','jiwoo','us','memory']); })(),
   events:[], echats:[], posts:[], comments:[], folders:[], music:[], movies:[], folder:'all', seen:{}, profiles:{}, newsCut:'', openEvent:null, openPost:null, replyTo:null };
 S.month = new Date(); S.month.setDate(1);
 
@@ -560,9 +567,9 @@ function memories(){ const L = [];
   for(const c of S.comments) if(c.memory_date){ const p = S.posts.find(x=>x.id===c.post_id); if(p) L.push({date:c.memory_date, post:p, cm:c, title:c.body||p.caption||'댓글', thumb:(c.media?.[0]||p.media?.[0])?.thumb, who:c.author, kind:c.parent_id?'답글':'댓글'}); }
   for(const m of S.movies) if(m.watched_on) L.push({date:m.watched_on, movie:m, title:m.title, thumb:m.poster, who:m.added_by, kind:'영상'});
   return L; }
-function dayMap(){ const m = {}; const add = (d,x) => (m[d] ||= []).push(x); const f = S.filter;
-  for(const e of S.events) if(f==='all' || f===e.owner || (f==='memory' && e.owner==='us')) evDays(e).forEach(d => add(d, {t:'ev', e}));
-  if(f==='all' || f==='memory') for(const x of memories()) add(x.date, {t:'mem', x});
+function dayMap(){ const m = {}; const add = (d,x) => (m[d] ||= []).push(x); const f = S.fl;
+  for(const e of S.events) if(f.has(e.owner)) evDays(e).forEach(d => add(d, {t:'ev', e}));
+  if(f.has('memory')) for(const x of memories()) add(x.date, {t:'mem', x});
   const rank = x => x.t==='mem' ? 2 : x.e.all_day ? 0 : 1;
   for(const k in m) m[k].sort((a,b) => rank(a) - rank(b) || (a.e?.start_time||'').localeCompare(b.e?.start_time||''));
   return m; }
@@ -577,7 +584,7 @@ function renderCal(){ const y = S.month.getFullYear(), mo = S.month.getMonth(); 
     cells += `<button class="day${d.getMonth()!==mo?' out':''}${k===today?' today':''}${k===S.sel?' sel':''}" data-day="${k}" aria-label="${kdate(k)} 일정 ${L.length}개"><span class="dn">${d.getDate()}</span>`+
       L.slice(0,3).map(x => x.t==='ev' ? `<span class="pill ${x.e.owner}">${esc(x.e.title)}</span>` : `<span class="pill memory">${esc(x.x.title)}</span>`).join('')+
       (L.length>3 ? `<span class="more">+${L.length-3}</span>` : '')+`</button>`; }
-  const F = [['all','전체',''],['yuna','애기','var(--y)'],['jiwoo','언니','var(--j)'],['memory','우리','var(--m)']];
+  const F = [['yuna','애기','var(--y)'],['jiwoo','언니','var(--j)'],['us','우리','var(--m)'],['memory','추억','var(--mlt)']], ALLF = F.map(x=>x[0]), allOn = ALLF.every(k => S.fl.has(k));
   const sd = parse(S.sel); const L = m[S.sel]||[];
   const agenda = L.length ? L.map(x => x.t==='ev'
       ? `<button class="item ${x.e.owner}" data-ev="${x.e.id}"><span class="bar"></span><span style="flex:1"><b>${esc(x.e.title)}</b><small>${esc(timeText(x.e))} · ${OWN[x.e.owner]||''}${chatCount(x.e.id)}</small></span></button>`
@@ -585,7 +592,7 @@ function renderCal(){ const y = S.month.getFullYear(), mo = S.month.getMonth(); 
       : `<button class="item memory" data-post="${x.x.post.id}" data-cm="${x.x.cm?.id||''}">${x.x.thumb?`<img src="${esc(x.x.thumb)}" alt="">`:''}<span style="flex:1"><b>${esc(x.x.title)}</b><small>추억 · ${x.x.kind} · ${WHO[x.who]||''}</small></span></button>`).join('')
     : `<div class="empty">이날은 아직 기록이 없어요</div>`;
   $('#main').innerHTML = `<section class="cal"><div><div class="calhead"><h2>${y}년 ${mo+1}월</h2><button class="ib" data-mv="-1" aria-label="이전 달">‹</button><button class="ib" data-mv="1" aria-label="다음 달">›</button><button class="btn" data-mv="0">오늘</button><button class="btn pri" data-add="ev">+ 일정</button></div>
-    <div class="filters">${F.map(([k,t,c]) => `<button class="chip${S.filter===k?' on':''}" data-f="${k}">${c?`<i style="background:${c}"></i>`:''}${t}</button>`).join('')}</div>
+    <div class="filters"><button class="chip${allOn?' on':''}" data-f="all">전체</button>${F.map(([k,t,c]) => `<button class="chip fc${S.fl.has(k)?' on':''}" data-f="${k}"><i style="background:${c}"></i>${t}</button>`).join('')}</div>
     <div class="grid">${WD.map(w=>`<div class="wd">${w}</div>`).join('')}${cells}</div></div>
     <aside class="agenda"><h3>${sd.getMonth()+1}월 ${sd.getDate()}일 ${WD[sd.getDay()]}요일</h3>${agenda}</aside></section>`; }
 const chatCount = id => { const n = S.echats.filter(c=>c.event_id===id).length; return n ? ` · 댓글 ${n}` : ''; };
@@ -1314,7 +1321,9 @@ function render(){ applyLook(); document.querySelectorAll('.tabs button').forEac
 $('#main').addEventListener('click', e => { const b = e.target.closest('button'); if(!b) return;
   if(b.dataset.day){ S.sel = b.dataset.day; const d = parse(S.sel); if(d.getMonth()!==S.month.getMonth()){ S.month = new Date(d.getFullYear(), d.getMonth(), 1); } render(); if(innerWidth<960) $('.agenda')?.scrollIntoView({behavior:'smooth', block:'start'}); }
   else if(b.dataset.mv!==undefined){ const v = +b.dataset.mv; if(v===0){ S.month = new Date(); S.month.setDate(1); S.sel = ymd(new Date()); } else S.month = new Date(S.month.getFullYear(), S.month.getMonth()+v, 1); render(); }
-  else if(b.dataset.f){ S.filter = b.dataset.f; render(); }
+  else if(b.dataset.f){ const k = b.dataset.f, all = ['yuna','jiwoo','us','memory'];
+    if(k==='all') S.fl = new Set(all.every(x => S.fl.has(x)) ? [] : all); else S.fl.has(k) ? S.fl.delete(k) : S.fl.add(k);
+    try{ localStorage.setItem('archive.fl', JSON.stringify([...S.fl])); }catch(e){} render(); }
   else if(b.dataset.fd){ b.dataset.fd==='manage' ? folderManager() : (S.folder = b.dataset.fd, render()); }
   else if(b.dataset.add){ b.dataset.add==='ev' ? eventForm() : postForm(); }
   else if(b.dataset.ev) openEvent(b.dataset.ev);
