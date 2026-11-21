@@ -417,6 +417,16 @@ input[type=text],input[type=date],input[type=time],input[type=password],textarea
   .calhead h2,.albhead h2,.news h2,.drawv h2{font-size:21.5px!important}
   .calhead,.albhead{margin-bottom:8px}
 }
+.mtg{font-style:normal;font-weight:700;margin-right:2px;opacity:.9}
+
+/* 그리기 색 더 보기 */
+.sw.more{background:conic-gradient(#e5677d,#ffb347,#ffe066,#7bd389,#7cc4ff,#8a63f0,#ff6fa8,#e5677d);position:relative}
+.sw.more::after{content:"+";position:absolute;inset:0;display:grid;place-items:center;color:#fff;font-weight:700;font-size:15px;text-shadow:0 0 3px #0008}
+.morecols{flex-basis:100%;display:flex;flex-wrap:wrap;gap:7px;align-items:center;padding:8px;border-radius:12px;background:var(--soft)}
+.morecols[hidden]{display:none}
+.sw.pick{position:relative;overflow:hidden;cursor:pointer;background:conic-gradient(red,yellow,lime,cyan,blue,magenta,red)}
+.sw.pick input{position:absolute;inset:-6px;width:calc(100% + 12px);height:calc(100% + 12px);opacity:0;cursor:pointer;border:0;padding:0}
+.pickt{font-size:12px;color:var(--sub)}
 </style>
 </head>
 <body>
@@ -578,10 +588,11 @@ async function uploadAll(files, onStep){ const out = []; for(let i=0;i<files.len
 
 /* ===== 캘린더 ===== */
 function evDays(e){ const out = []; const a = parse(e.start_date), b = parse(e.end_date || e.start_date); for(let d = new Date(a); d <= b && out.length < 62; d.setDate(d.getDate()+1)) out.push(ymd(d)); return out; }
+const memLabel = x => `<i class="mtg">[${x.tag}]</i>${esc(x.title||'')}`;
 function memories(){ const L = [];
-  for(const p of S.posts) if(p.memory_date) L.push({date:p.memory_date, post:p, title:p.caption||'사진첩', thumb:p.media?.[0]?.thumb, who:p.author, kind:'사진첩 글'});
-  for(const c of S.comments) if(c.memory_date){ const p = S.posts.find(x=>x.id===c.post_id); if(p) L.push({date:c.memory_date, post:p, cm:c, title:c.body||p.caption||'댓글', thumb:(c.media?.[0]||p.media?.[0])?.thumb, who:c.author, kind:c.parent_id?'답글':'댓글'}); }
-  for(const m of S.movies) if(m.watched_on) L.push({date:m.watched_on, movie:m, title:m.title, thumb:m.poster, who:m.added_by, kind:'영상'});
+  for(const p of S.posts) if(p.memory_date) L.push({date:p.memory_date, post:p, tag:'사진', title:p.caption||'', thumb:p.media?.[0]?.thumb, who:p.author, kind:'사진첩 글'});
+  for(const c of S.comments) if(c.memory_date){ const p = S.posts.find(x=>x.id===c.post_id); if(p) L.push({date:c.memory_date, post:p, cm:c, tag:'사진', title:c.body||p.caption||'', thumb:(c.media?.[0]||p.media?.[0])?.thumb, who:c.author, kind:c.parent_id?'답글':'댓글'}); }
+  for(const m of S.movies) if(m.watched_on) L.push({date:m.watched_on, movie:m, tag:'영상', title:m.title, thumb:m.poster, who:m.added_by, kind:'영상'});
   return L; }
 function dayMap(){ const m = {}; const add = (d,x) => (m[d] ||= []).push(x); const f = S.fl;
   for(const e of S.events) if(f.has(e.owner)) evDays(e).forEach(d => add(d, {t:'ev', e}));
@@ -598,14 +609,14 @@ function renderCal(){ const y = S.month.getFullYear(), mo = S.month.getMonth(); 
   for(let i=0;i<42;i++){ const d = new Date(start); d.setDate(start.getDate()+i); const k = ymd(d); const L = m[k]||[];
     if(i===35 && d.getMonth()!==mo) break;
     cells += `<button class="day${d.getMonth()!==mo?' out':''}${k===today?' today':''}${k===S.sel?' sel':''}" data-day="${k}" aria-label="${kdate(k)} 일정 ${L.length}개"><span class="dn">${d.getDate()}</span>`+
-      L.slice(0,3).map(x => x.t==='ev' ? `<span class="pill ${x.e.owner}">${esc(x.e.title)}</span>` : `<span class="pill memory">${esc(x.x.title)}</span>`).join('')+
+      L.slice(0,3).map(x => x.t==='ev' ? `<span class="pill ${x.e.owner}">${esc(x.e.title)}</span>` : `<span class="pill memory">${memLabel(x.x)}</span>`).join('')+
       (L.length>3 ? `<span class="more">+${L.length-3}</span>` : '')+`</button>`; }
   const F = [['yuna','애기','var(--y)'],['jiwoo','언니','var(--j)'],['us','우리','var(--m)'],['memory','추억','var(--mlt)']], ALLF = F.map(x=>x[0]), allOn = ALLF.every(k => S.fl.has(k));
   const sd = parse(S.sel); const L = m[S.sel]||[];
   const agenda = L.length ? L.map(x => x.t==='ev'
       ? `<button class="item ${x.e.owner}" data-ev="${x.e.id}"><span class="bar"></span><span style="flex:1"><b>${esc(x.e.title)}</b><small>${esc(timeText(x.e))} · ${OWN[x.e.owner]||''}${chatCount(x.e.id)}</small></span></button>`
-      : x.x.movie ? `<button class="item memory" data-go="movies">${x.x.thumb?`<img src="${esc(x.x.thumb)}" alt="">`:''}<span style="flex:1"><b>${esc(x.x.title)}</b><small>추억 · ${x.x.movie.kind==='tv'?'드라마':'영상'}${x.x.movie.year?` · ${x.x.movie.year}`:''}</small></span></button>`
-      : `<button class="item memory" data-post="${x.x.post.id}" data-cm="${x.x.cm?.id||''}">${x.x.thumb?`<img src="${esc(x.x.thumb)}" alt="">`:''}<span style="flex:1"><b>${esc(x.x.title)}</b><small>추억 · ${x.x.kind} · ${WHO[x.who]||''}</small></span></button>`).join('')
+      : x.x.movie ? `<button class="item memory" data-go="movies">${x.x.thumb?`<img src="${esc(x.x.thumb)}" alt="">`:''}<span style="flex:1"><b>${memLabel(x.x)}</b><small>추억 · ${KIND[x.x.movie.kind]||'영화'}${x.x.movie.year?` · ${x.x.movie.year}`:''}</small></span></button>`
+      : `<button class="item memory" data-post="${x.x.post.id}" data-cm="${x.x.cm?.id||''}">${x.x.thumb?`<img src="${esc(x.x.thumb)}" alt="">`:''}<span style="flex:1"><b>${memLabel(x.x)}</b><small>추억 · ${x.x.kind} · ${WHO[x.who]||''}</small></span></button>`).join('')
     : `<div class="empty">이날은 아직 기록이 없어요</div>`;
   $('#main').innerHTML = `<section class="cal"><div><div class="calhead"><h2>${y}년 ${mo+1}월</h2><button class="ib" data-mv="-1" aria-label="이전 달">‹</button><button class="ib" data-mv="1" aria-label="다음 달">›</button><button class="btn" data-mv="0">오늘</button><button class="btn pri" data-add="ev">+ 일정</button></div>
     <div class="filters"><button class="chip${allOn?' on':''}" data-f="all">전체</button>${F.map(([k,t,c]) => `<button class="chip fc${S.fl.has(k)?' on':''}" data-f="${k}"><i style="background:${c}"></i>${t}</button>`).join('')}</div>
@@ -893,6 +904,7 @@ function openSettings(){ if(!S.me) return whoGate(); const pr = S.profiles[S.me]
 
 /* ===== 그리기 (같이 그리기 · 사진 위에 그리기) ===== */
 const PALETTE = ['#22202a','#ffffff','#8a63f0','#e9b40c','#e5677d','#3b82f6','#22a06b','#ff8a3d'];
+const PALETTE2 = ['#7a7785','#c9c6d1','#d63a3a','#ff6fa8','#ffb3c7','#c4a7ff','#5b3fc4','#1e3a8a','#7cc4ff','#2ec4b6','#a6e3a1','#6b8e23','#ffe066','#f4a261','#8b5a2b','#f5deb3'];
 const SIZES = [3, 7, 14];
 const HEART = c => `<svg viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-9.6-9.2C.9 8.4 3 4.5 6.7 4.5c2.1 0 3.6 1.2 4.3 2.4.7-1.2 2.2-2.4 4.3-2.4 3.7 0 5.8 3.9 4.3 7.3C19.5 16.4 12 21 12 21z" fill="${c}"/></svg>`;
 class Board {
@@ -955,13 +967,18 @@ let hapticEl = null;
 function buzz(){ try{ navigator.vibrate?.(12); }catch(e){}
   try{ if(!hapticEl){ hapticEl = document.createElement('label'); hapticEl.style.cssText = 'position:fixed;left:-99px;top:0;opacity:0;pointer-events:none'; hapticEl.innerHTML = '<input type="checkbox" switch>'; document.body.append(hapticEl); } hapticEl.click(); }catch(e){} }
 function toolsHTML(o = {}){ return `<div class="tools">${PALETTE.map(c=>`<button class="sw" data-col="${c}" style="background:${c}" aria-label="색 ${c}"></button>`).join('')}
+  <button class="sw more" data-tool="morecol" aria-label="색 더 보기"></button>
   <span class="tsep"></span>${SIZES.map(z=>`<button class="sz" data-sz="${z}" aria-label="굵기 ${z}"><i style="width:${Math.max(4,z)}px;height:${Math.max(4,z)}px"></i></button>`).join('')}
-  <button class="tbtn" data-tool="eraser">지우개</button><button class="tbtn" data-tool="undo">되돌리기</button>${o.clear?'<button class="tbtn" data-tool="clear">전체 지우기</button>':''}${o.save?'<button class="tbtn pri" data-tool="save">사진첩에 저장</button>':''}</div>`; }
+  <button class="tbtn" data-tool="eraser">지우개</button><button class="tbtn" data-tool="undo">되돌리기</button>${o.clear?'<button class="tbtn" data-tool="clear">전체 지우기</button>':''}${o.save?'<button class="tbtn pri" data-tool="save">사진첩에 저장</button>':''}
+  <div class="morecols" hidden>${PALETTE2.map(c=>`<button class="sw" data-col="${c}" style="background:${c}" aria-label="색 ${c}"></button>`).join('')}<label class="sw pick" aria-label="직접 고르기"><input type="color" value="#8a63f0"></label><span class="pickt">← 직접 고르기</span></div></div>`; }
 function bindTools(root, board, h = {}){ const sync = () => { root.querySelectorAll('[data-col]').forEach(b => b.classList.toggle('on', !board.eraser && b.dataset.col===board.color));
-    root.querySelectorAll('[data-sz]').forEach(b => b.classList.toggle('on', +b.dataset.sz===board.size)); root.querySelector('[data-tool=eraser]').classList.toggle('on', board.eraser); };
+    root.querySelectorAll('[data-sz]').forEach(b => b.classList.toggle('on', +b.dataset.sz===board.size)); root.querySelector('[data-tool=eraser]').classList.toggle('on', board.eraser);
+    const known = [...PALETTE, ...PALETTE2].includes(board.color), pk = root.querySelector('.pick'); if(pk){ pk.classList.toggle('on', !board.eraser && !known); if(!known) pk.style.background = board.color; }
+    const mc = root.querySelector('[data-tool=morecol]'); if(mc) mc.classList.toggle('on', !board.eraser && !PALETTE.includes(board.color)); };
+  const pin = root.querySelector('.pick input'); if(pin) pin.oninput = pin.onchange = () => { board.color = pin.value; board.eraser = false; sync(); };
   root.querySelector('.tools').onclick = e => { const b = e.target.closest('button'); if(!b) return;
     if(b.dataset.col){ board.color = b.dataset.col; board.eraser = false; } else if(b.dataset.sz) board.size = +b.dataset.sz;
-    else if(b.dataset.tool==='eraser') board.eraser = !board.eraser; else h[b.dataset.tool]?.(); sync(); };
+    else if(b.dataset.tool==='eraser') board.eraser = !board.eraser; else if(b.dataset.tool==='morecol'){ const m = root.querySelector('.morecols'); m.hidden = !m.hidden; } else h[b.dataset.tool]?.(); sync(); };
   sync(); }
 
 const Draw = { strokes:[], board:null, ch:null, others:[], ghost:null, buf:{}, timer:null, lastPtr:0,
