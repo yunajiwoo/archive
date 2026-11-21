@@ -427,12 +427,15 @@ input[type=text],input[type=date],input[type=time],input[type=password],textarea
 .sw.pick{position:relative;overflow:hidden;cursor:pointer;background:conic-gradient(red,yellow,lime,cyan,blue,magenta,red)}
 .sw.pick input{position:absolute;inset:-6px;width:calc(100% + 12px);height:calc(100% + 12px);opacity:0;cursor:pointer;border:0;padding:0}
 .pickt{font-size:12px;color:var(--sub)}
+.brand{cursor:pointer;-webkit-tap-highlight-color:transparent}.brand:active{opacity:.6}
+.mctoday{margin-inline-start:auto;min-height:30px;padding:0 12px;font-size:13px}
+.composer.dropping{outline:2px dashed var(--y);outline-offset:-4px}
 </style>
 </head>
 <body>
 <div id="demo" class="demo hidden">미리보기 모드예요. 예시 데이터라 새로고침하면 사라져요.</div>
 <header class="top">
-  <div class="brand"><span class="dots"><i></i><i></i></span><h1>애기 · 언니 아카이브</h1></div>
+  <div class="brand" role="button" tabindex="0" title="캘린더로"><span class="dots"><i></i><i></i></span><h1>애기 · 언니 아카이브</h1></div>
   <nav class="tabs"><button data-v="cal" class="on">캘린더</button><button data-v="album">사진첩</button><button data-v="music">음악</button><button data-v="movies">영상</button><button data-v="draw">그리기</button><button data-v="news">새소식</button></nav>
   <button class="me" id="meBtn" title="나·프로필 사진·테마 설정" aria-label="설정"></button>
 </header>
@@ -746,7 +749,11 @@ function composer(opts){ /* 사진·동영상 첨부 + 날짜가 있는 입력�
   hasd.onchange = () => dt.classList.toggle('hidden', !hasd.checked);
   const draw = () => { pend.innerHTML = files.map((p,i) => `<div><img src="${p.prev}" alt="">${p.kind==='video'?'<span class="play" style="width:26px;height:26px"></span>':''}<button type="button" data-rm="${i}" aria-label="빼기">×</button></div>`).join(''); };
   pend.onclick = e => { const b = e.target.closest('[data-rm]'); if(b){ files.splice(+b.dataset.rm, 1); draw(); } };
-  el.querySelector('.attach').onclick = () => pick(async list => { for(const f of list){ try{ const p = await prep(f); p.prev = p.thumb ? URL.createObjectURL(p.thumb) : ''; files.push(p); } catch(err){ toast(err.message); } } draw(); });
+  const addFiles = async list => { for(const f of list){ try{ const p = await prep(f); p.prev = p.thumb ? URL.createObjectURL(p.thumb) : ''; files.push(p); } catch(err){ toast(err.message); } } draw(); };
+  el._addFiles = addFiles; el.querySelector('.attach').onclick = () => pick(addFiles);
+  el.addEventListener('dragover', e => { if([...e.dataTransfer.items].some(i => i.kind==='file')){ e.preventDefault(); el.classList.add('dropping'); } });
+  el.addEventListener('dragleave', () => el.classList.remove('dropping'));
+  el.addEventListener('drop', e => { e.preventDefault(); el.classList.remove('dropping'); const L = [...e.dataTransfer.files].filter(f => /^(image|video)\//.test(f.type)); if(L.length) addFiles(L); });
   el.onsubmit = async ev => { ev.preventDefault(); const body = ta.value.trim(); if(!body && !files.length) return; if(opts.requireMedia && !files.length){ toast('사진이나 동영상을 하나 이상 넣어 주세요'); return; } send.disabled = true;
     try{ const media = await uploadAll(files, (i,n) => send.textContent = `${i}/${n}`); await opts.onSubmit({body, media, memory_date: hasd.checked ? dt.value : null});
       ta.value = ''; ta.style.height = ''; files.length = 0; draw(); hasd.checked = false; dt.classList.add('hidden'); }
@@ -1193,7 +1200,7 @@ const Movies = { edit:false, busy:false, mode:'cal', month:null, sel:null,
     for(let dd=1; dd<=n; dd++){ const key = pre + String(dd).padStart(2,'0'), L = by[key];
       cells += L ? `<button class="mcd has${key===this.sel?' on':''}" data-mvday="${key}">${this.poster(L[0], 'mcp')}${L.length>1?`<i class="mcn">${L.length}</i>`:''}<em>${dd}</em></button>`
                  : `<div class="mcd"><span>${dd}</span></div>`; }
-    return `<div class="mchead"><button class="mca" data-mvm="-1" aria-label="이전 달">◀</button><b>${String(y).slice(2)}.${String(mo+1).padStart(2,'0')} 캘린더</b><button class="mca" data-mvm="1" aria-label="다음 달">▶</button></div>
+    return `<div class="mchead"><button class="mca" data-mvm="-1" aria-label="이전 달">◀</button><b>${String(y).slice(2)}.${String(mo+1).padStart(2,'0')} 캘린더</b><button class="mca" data-mvm="1" aria-label="다음 달">▶</button><button class="btn mctoday" data-mvm="0">이번 달</button></div>
       <div class="mcsub"><b>${total}편</b> · ${days.length}일 감상</div>
       <div class="mcgrid">${WD.map(w=>`<div class="mcw">${w}</div>`).join('')}${cells}</div>
       ${days.length ? days.map(k => this.dayList(k, by[k])).join('') : '<div class="empty">이 달에는 본 영상이 없어요</div>'}`; },
@@ -1204,7 +1211,7 @@ const Movies = { edit:false, busy:false, mode:'cal', month:null, sel:null,
     const root = $('#main').querySelector('.mvwrap');
     root.onclick = e => { const b = e.target.closest('[data-mvmode],[data-mvm],[data-mvday]'); if(!b) return; e.stopPropagation();
       if(b.dataset.mvmode){ this.mode = b.dataset.mvmode; this.render(); }
-      else if(b.dataset.mvm){ this.month = new Date(this.month.getFullYear(), this.month.getMonth() + +b.dataset.mvm, 1); this.sel = null; this.render(); }
+      else if(b.dataset.mvm){ const n = new Date(); this.month = +b.dataset.mvm ? new Date(this.month.getFullYear(), this.month.getMonth() + +b.dataset.mvm, 1) : new Date(n.getFullYear(), n.getMonth(), 1); this.sel = null; this.render(); }
       else { this.sel = b.dataset.mvday; this.render(); document.getElementById('mvd-' + this.sel)?.scrollIntoView({behavior:'smooth', block:'start'}); } };
     this.fill(); },
   form(m){ const isNew = !m; m = m || {title:'', year:'', kind:'movie', watched_on:ymd(new Date())}; let kind = m.kind || 'movie';
@@ -1335,6 +1342,11 @@ function ask(msg){ return new Promise(ok => {
   const box = document.createElement('div'); box.className = 'modal'; box.style.zIndex = 90;
   box.innerHTML = `<div class="sheet" style="width:min(380px,100%)"><div class="sb"><p style="margin:0 0 4px;font-size:17px">${esc(msg)}</p></div><div class="sf"><button class="btn" data-n>취소</button><button class="btn danger" data-y>지우기</button></div></div>`;
   document.body.append(box); const done = v => { box.remove(); ok(v); }; box.querySelector('[data-n]').onclick = () => done(false); box.querySelector('[data-y]').onclick = () => done(true); }); }
+/* Ctrl+V / ⌘V로 사진 붙여넣기: 지금 쓰고 있는 입력창(없으면 열려 있는 창의 입력창)에 첨부 */
+document.addEventListener('paste', e => { const L = [...(e.clipboardData?.files || [])].filter(f => /^(image|video)\//.test(f.type)); if(!L.length) return;
+  const vis = el => el && el.offsetParent !== null; let c = document.activeElement?.closest?.('form.composer');
+  if(!c?._addFiles){ const all = [...document.querySelectorAll('form.composer')].filter(x => x._addFiles && vis(x)); c = all[all.length-1]; }
+  if(!c){ return; } e.preventDefault(); c._addFiles(L.map((f,i) => f.name && f.name !== 'image.png' ? f : new File([f], `붙여넣은사진_${Date.now()}_${i}.${(f.type.split('/')[1]||'png').replace('jpeg','jpg')}`, {type:f.type}))); toast('사진을 붙였어요'); });
 function pick(cb){ const p = $('#picker'); p.value = ''; p.onchange = () => cb([...p.files]); p.click(); }
 /* 엔터: 보내기 · Ctrl(⌘)+엔터 또는 Shift+엔터: 줄바꿈 */
 function enterToSend(ta, form){ ta.addEventListener('keydown', ev => {
@@ -1370,6 +1382,8 @@ $('#main').addEventListener('click', e => { const b = e.target.closest('button')
   else if(b.dataset.push) b.dataset.push==='on' ? Push.enable() : Push.disable(); });
 $('#modal').addEventListener('click', e => { if(e.target.id==='modal' || e.target.closest('[data-close]')) closeSheet(); });
 document.querySelectorAll('.tabs button').forEach(b => b.onclick = () => openView(b.dataset.v));
+{ const br = document.querySelector('.brand'); const home = () => { try{ closePost(); }catch(e){} try{ closeSheet(); }catch(e){} const n = new Date(); S.month = new Date(n.getFullYear(), n.getMonth(), 1); S.sel = ymd(n); openView('cal'); scrollTo({top:0, behavior:'smooth'}); };
+  br.onclick = home; br.onkeydown = e => { if(e.key==='Enter') home(); }; }
 window.addEventListener('hashchange', () => { if(S.ready) route(); });
 $('#fab').onclick = () => S.view==='cal' ? eventForm() : S.view==='music' ? Music.addSheet() : S.view==='movies' ? Movies.form() : postForm();
 $('#meBtn').onclick = () => openSettings();
