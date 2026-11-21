@@ -409,6 +409,14 @@ input[type=text],input[type=date],input[type=time],input[type=password],textarea
   .filters .chip{min-height:26px!important;padding:0 8px!important;font-size:12px;gap:4px}
   .filters .chip i{width:7px;height:7px}
 }
+
+/* 모바일: 필터·폴더 칩을 상단 탭 크기로 · 제목 90% */
+@media(max-width:600px){
+  .filters .chip,.folders .chip,.albhead+.filters .chip{min-height:27px!important;padding:0 9px!important;font-size:12px!important;gap:4px}
+  .filters .chip small,.folders .chip small{font-size:10.5px}
+  .calhead h2,.albhead h2,.news h2,.drawv h2{font-size:21.5px!important}
+  .calhead,.albhead{margin-bottom:8px}
+}
 </style>
 </head>
 <body>
