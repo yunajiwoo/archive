@@ -430,6 +430,11 @@ input[type=text],input[type=date],input[type=time],input[type=password],textarea
 .brand{cursor:pointer;-webkit-tap-highlight-color:transparent}.brand:active{opacity:.6}
 .mctoday{margin-inline-start:auto;min-height:30px;padding:0 12px;font-size:13px}
 .composer.dropping{outline:2px dashed var(--y);outline-offset:-4px}
+
+/* 캘린더 칸: 일정 4개까지 확실히 보이게 (아이폰 버튼 높이 문제 방지) */
+.cal .day{height:auto!important;-webkit-appearance:none;appearance:none;justify-content:flex-start}
+.cal .day>*{flex:none}
+@media(max-width:600px){.cal .day{min-height:82px!important;overflow:visible}.cal .more{font-size:10px;line-height:13px;padding-left:3px;color:var(--sub);font-weight:500}}
 </style>
 </head>
 <body>
@@ -609,11 +614,12 @@ const timeText = e => { const multi = e.end_date && e.end_date !== e.start_date;
 
 function renderCal(){ const y = S.month.getFullYear(), mo = S.month.getMonth(); const first = new Date(y, mo, 1); const start = new Date(first); start.setDate(1 - first.getDay());
   const m = dayMap(), today = ymd(new Date()); let cells = '';
+  const MAXP = matchMedia('(max-width:600px)').matches ? 2 : 3;
   for(let i=0;i<42;i++){ const d = new Date(start); d.setDate(start.getDate()+i); const k = ymd(d); const L = m[k]||[];
     if(i===35 && d.getMonth()!==mo) break;
     cells += `<button class="day${d.getMonth()!==mo?' out':''}${k===today?' today':''}${k===S.sel?' sel':''}" data-day="${k}" aria-label="${kdate(k)} 일정 ${L.length}개"><span class="dn">${d.getDate()}</span>`+
-      L.slice(0,3).map(x => x.t==='ev' ? `<span class="pill ${x.e.owner}">${esc(x.e.title)}</span>` : `<span class="pill memory">${memLabel(x.x)}</span>`).join('')+
-      (L.length>3 ? `<span class="more">+${L.length-3}</span>` : '')+`</button>`; }
+      L.slice(0,MAXP).map(x => x.t==='ev' ? `<span class="pill ${x.e.owner}">${esc(x.e.title)}</span>` : `<span class="pill memory">${memLabel(x.x)}</span>`).join('')+
+      (L.length>MAXP ? `<span class="more">+${L.length-MAXP}</span>` : '')+`</button>`; }
   const F = [['yuna','애기','var(--y)'],['jiwoo','언니','var(--j)'],['us','우리','var(--m)'],['memory','추억','var(--mlt)']], ALLF = F.map(x=>x[0]), allOn = ALLF.every(k => S.fl.has(k));
   const sd = parse(S.sel); const L = m[S.sel]||[];
   const agenda = L.length ? L.map(x => x.t==='ev'
