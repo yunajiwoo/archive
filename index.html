@@ -532,6 +532,22 @@ img{-webkit-user-drag:none}
 img,video,[data-rx] img{-webkit-touch-callout:default!important}
 .rxsep{width:1px;align-self:stretch;margin:6px 3px;background:var(--line)}
 .rxpop .rxcp{width:auto!important;padding:0 12px;font-size:14px!important;font-weight:500;border-radius:999px!important;color:var(--ink)}
+.mtop{display:flex;align-items:center;justify-content:space-between;gap:10px}.mtop .subnav{margin-bottom:12px}.mnew{margin-bottom:12px}
+@media(max-width:600px){.mnew{display:none}}
+
+/* 음악 검색: 돋보기 아이콘 */
+.msbtn{width:38px;height:38px;border-radius:50%;border:1px solid var(--line);background:var(--card);color:var(--ink);margin-inline-start:auto}
+.msbtn.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.albhead .msbtn+.medbtn{margin-inline-start:0}
+.msearch{display:flex;align-items:center;gap:8px;height:42px;padding:0 6px 0 14px;border-radius:21px;background:var(--soft);margin:0 0 14px}
+.msearch .msi{color:var(--sub);flex:none}
+.msearch input{flex:1;min-width:0;border:0!important;background:transparent!important;box-shadow:none!important;padding:0!important;height:100%;font-size:15px;outline:0}
+.msearch input::-webkit-search-cancel-button{display:none}
+.msearch span{position:static;transform:none;font-size:12px;color:var(--sub);flex:none}
+.msx{width:30px;height:30px;border-radius:50%;color:var(--sub);font-size:13px;flex:none}
+@media(max-width:600px){.msbtn{width:34px;height:34px}}
+/* 아이폰: 키보드가 닫힌 뒤 화면 위치가 어긋나 버튼이 안 눌리는 문제 */
+body.modal-open{overflow:hidden}
 </style>
 </head>
 <body>
@@ -1211,13 +1227,14 @@ const Mission = { who: store.get('archive.mwho') || 'all', showDone: store.get('
     const sortT = (a,b) => (a.created_at||'').localeCompare(b.created_at||'');
     const todo = L.filter(m=>!m.done).sort(sortT), done = L.filter(m=>m.done).sort((a,b) => (b.done_at||'').localeCompare(a.done_at||''));
     const cnt = w => { const M = S.missions.filter(m=>m.owner===w); return `${M.filter(m=>m.done).length}/${M.length}`; };
-    $('#main').innerHTML = `<section class="missionv">${subNav()}
+    $('#main').innerHTML = `<section class="missionv"><div class="mtop">${subNav()}<button class="btn pri mnew" data-mnew="1">+ 미션</button></div>
       <div class="filters mfil">${[['all','전체'],['yuna','애기'],['jiwoo','언니']].map(([k,t]) => `<button class="chip${this.who===k?' on':''}" data-mwho="${k}">${k!=='all'?`<i style="background:var(--${k==='yuna'?'y':'j'})"></i>`:''}${t}</button>`).join('')}</div>
       ${S.missions.length ? `<div class="mlist">${todo.length ? todo.map(m=>this.row(m)).join('') : '<div class="empty">진행 중인 미션이 없어요</div>'}</div>
       ${done.length ? `<button class="mdh" data-mdone="1">달성한 미션 ${done.length}개 <span>${this.showDone?'접기 ▴':'펼치기 ▾'}</span></button>${this.showDone?`<div class="mlist">${done.map(m=>this.row(m)).join('')}</div>`:''}` : ''}`
       : '<div class="empty">하고 싶은 것, 해야 하는 것을 미션으로 적어 보세요.<br>블라인드로 적으면 달성할 때까지 상대에게 비밀이에요.</div>'}</section>`;
     const root = $('#main').querySelector('.missionv');
-    root.onclick = async e => { const t = e.target.closest('[data-mwho],[data-mdone],[data-mchk],[data-mopen]'); if(!t) return; e.stopPropagation();
+    root.onclick = async e => { const t = e.target.closest('[data-mwho],[data-mdone],[data-mchk],[data-mopen],[data-mnew]'); if(!t) return; e.stopPropagation();
+      if(t.dataset.mnew){ this.form(); return; }
       if(t.dataset.mwho){ this.who = t.dataset.mwho; store.set('archive.mwho', this.who); this.render(); }
       else if(t.dataset.mdone){ this.showDone = !this.showDone; store.set('archive.mdone', this.showDone?'1':'0'); this.render(); }
       else if(t.dataset.mchk){ this.toggle(t.dataset.mchk, t); }
@@ -1314,10 +1331,10 @@ const Music = { edit:false, busy:false, q:'',
       <span class="mtt${m.title ? '' : ' dim'}">${esc(t)}</span></a>
       ${this.edit ? `<div class="medit"><button class="tbtn" data-mren="${m.id}">제목</button><button class="tbtn danger" data-mdel="${m.id}">삭제</button></div>` : ''}</div>`; },
   render(){ const L = [...S.music].sort((a,b) => (b.shared_at||b.created_at).localeCompare(a.shared_at||a.created_at));
-    $('#main').innerHTML = `<section><div class="albhead"><h2>음악 <small class="mcount">${L.length}곡</small></h2><button class="btn medbtn${this.edit?' on':''}" data-mus="edit">${this.edit?'완료':'편집'}</button><button class="btn pri" data-mus="add">+ 음악</button></div>
-      ${L.length ? `<div class="msearch"><input type="search" id="mq" placeholder="노래 제목으로 찾기" value="${esc(this.q)}" autocomplete="off"><span id="mqn"></span></div>` : ''}
+    $('#main').innerHTML = `<section><div class="albhead"><h2>음악 <small class="mcount">${L.length}곡</small></h2><button class="ib msbtn${this.sOpen||this.q?' on':''}" data-mus="search" aria-label="노래 찾기"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 20 20"/></svg></button><button class="btn medbtn${this.edit?' on':''}" data-mus="edit">${this.edit?'완료':'편집'}</button><button class="btn pri" data-mus="add">+ 음악</button></div>
+      ${L.length && (this.sOpen || this.q) ? `<div class="msearch"><svg viewBox="0 0 24 24" width="16" height="16" class="msi" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 20 20"/></svg><input type="search" id="mq" placeholder="노래 제목으로 찾기" value="${esc(this.q)}" autocomplete="off" enterkeyhint="search"><span id="mqn"></span><button class="msx" data-mus="sclose" aria-label="검색 닫기">✕</button></div>` : ''}
       ${L.length ? `<div class="mgrid">${L.map(m => this.card(m)).join('')}</div>` : '<div class="empty">유튜브나 스포티파이 링크를 붙여 넣어 첫 곡을 추가해 보세요</div>'}</section>`;
-    const q = $('#mq'); if(q){ q.oninput = () => { this.q = q.value; this.filter(); }; this.filter(); }
+    const q = $('#mq'); if(q){ q.oninput = () => { this.q = q.value; this.filter(); }; q.onkeydown = e => { if(e.key==='Enter') q.blur(); if(e.key==='Escape'){ this.q = ''; this.sOpen = false; this.render(); } }; this.filter(); if(this.focusQ){ this.focusQ = false; q.focus(); } }
     this.fill(); },
   filter(){ const k = songKey(this.q), raw = this.q.trim().toLowerCase(); let n = 0;
     document.querySelectorAll('.mcard').forEach(c => { const m = S.music.find(x => x.id===c.dataset.mid); const t = m?.title || '';
@@ -1604,12 +1621,17 @@ function zoomable(img, onSwipe){ let z = 1, x = 0, y = 0, pinch = null, pan = nu
   img.addEventListener('pointerup', up); img.addEventListener('pointercancel', up);
   img.addEventListener('wheel', e => { e.preventDefault(); zoomAt(z * (e.deltaY < 0 ? 1.15 : 1/1.15), e.clientX, e.clientY); apply(); }, {passive:false});
   img.addEventListener('dblclick', e => { if(e.pointerType) return; }); }
-function openSheet(html, cls){ const sh = $('#sheet'); sh.className = 'sheet' + (cls ? ' '+cls : ''); sh.innerHTML = html; $('#modal').classList.remove('hidden'); }
-function closeSheet(){ $('#modal').classList.add('hidden'); $('#sheet').innerHTML = ''; S.openEvent = null; S.openMission = null; }
+function openSheet(html, cls){ document.body.classList.add('modal-open'); const sh = $('#sheet'); sh.className = 'sheet' + (cls ? ' '+cls : ''); sh.innerHTML = html; $('#modal').classList.remove('hidden'); }
+function closeSheet(){ document.body.classList.remove('modal-open'); $('#modal').classList.add('hidden'); $('#sheet').innerHTML = ''; S.openEvent = null; S.openMission = null; }
 function ask(msg){ return new Promise(ok => {
   const box = document.createElement('div'); box.className = 'modal'; box.style.zIndex = 90;
   box.innerHTML = `<div class="sheet" style="width:min(380px,100%)"><div class="sb"><p style="margin:0 0 4px;font-size:17px">${esc(msg)}</p></div><div class="sf"><button class="btn" data-n>취소</button><button class="btn danger" data-y>지우기</button></div></div>`;
   document.body.append(box); const done = v => { box.remove(); ok(v); }; box.querySelector('[data-n]').onclick = () => done(false); box.querySelector('[data-y]').onclick = () => done(true); }); }
+/* 아이폰 키보드가 닫히면 화면을 제자리로 돌려 놓아요 (안 그러면 닫기 버튼 등이 안 눌려요) */
+{ let y0 = 0; document.addEventListener('focusin', e => { if(e.target.matches?.('input,textarea')) y0 = window.scrollY; });
+  document.addEventListener('focusout', e => { if(!e.target.matches?.('input,textarea')) return;
+    setTimeout(() => { if(document.activeElement?.matches?.('input,textarea')) return; window.scrollTo(0, y0); document.body.style.transform = 'translateZ(0)'; requestAnimationFrame(() => document.body.style.transform = ''); }, 60); });
+  window.visualViewport?.addEventListener('resize', () => { if(window.visualViewport.height > window.innerHeight * 0.85 && !document.activeElement?.matches?.('input,textarea')) window.scrollTo(0, y0); }); }
 /* 앱처럼: 두 손가락 확대·두 번 탭 확대 막기 (아이폰은 viewport 설정을 무시해서 직접 막아요) */
 ['gesturestart','gesturechange','gestureend'].forEach(t => document.addEventListener(t, e => e.preventDefault(), {passive:false}));
 document.addEventListener('touchmove', e => { if(e.touches.length > 1 || (e.scale !== undefined && e.scale !== 1)) e.preventDefault(); }, {passive:false});
@@ -1649,7 +1671,10 @@ $('#main').addEventListener('click', e => { const b = e.target.closest('button')
   else if(b.dataset.go) go(b.dataset.go);
   else if(b.dataset.mvadd) Movies.form();
   else if(b.dataset.mved){ const m = S.movies.find(x=>x.id===b.dataset.mved); if(m) Movies.form(m); }
-  else if(b.dataset.mus){ if(b.dataset.mus==='add') Music.addSheet(); else { Music.edit = !Music.edit; Music.render(); } }
+  else if(b.dataset.mus){ const k = b.dataset.mus; if(k==='add') Music.addSheet();
+    else if(k==='search'){ if(Music.sOpen || Music.q){ Music.sOpen = false; Music.q = ''; } else { Music.sOpen = true; Music.focusQ = true; } Music.render(); }
+    else if(k==='sclose'){ Music.sOpen = false; Music.q = ''; Music.render(); }
+    else { Music.edit = !Music.edit; Music.render(); } }
   else if(b.dataset.mren){ const m = S.music.find(x=>x.id===b.dataset.mren); if(m) Music.rename(m); }
   else if(b.dataset.mdel){ const m = S.music.find(x=>x.id===b.dataset.mdel); if(m) ask(`'${m.title||'이 곡'}'을 지울까요?`).then(async y => { if(y){ await API.del('music', m.id); await refresh(); } }); }
   else if(b.dataset.push) b.dataset.push==='on' ? Push.enable() : Push.disable(); });
