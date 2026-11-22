@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <title>애기 · 언니 아카이브</title>
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
@@ -466,13 +466,79 @@ input[type=text],input[type=date],input[type=time],input[type=password],textarea
 .msim>b{color:#c2414f}.msim small{color:var(--sub);font-size:12px;display:block}
 .msim a{display:flex;gap:9px;align-items:center;color:inherit;text-decoration:none;background:var(--card);border-radius:9px;padding:6px}
 .msim a img{width:48px;height:36px;object-fit:cover;border-radius:5px;background:var(--line);flex:none}.msim a span{min-width:0;line-height:1.35}
+
+/* 그리고: 하위 메뉴 */
+.subnav{display:inline-flex;background:var(--soft);border-radius:999px;padding:3px;margin:2px 0 12px}
+.subnav button{padding:6px 18px;border-radius:999px;font-size:14px;color:var(--sub);min-height:32px}
+.subnav button.on{background:var(--card);color:var(--ink);font-weight:700;box-shadow:0 1px 3px #0002}
+.drawv .dhead{min-height:0;margin-bottom:6px}
+/* 미션 */
+.missionv{max-width:720px;padding-bottom:90px}
+.mstat{display:flex;gap:14px;margin:0 0 10px;padding-left:4px;font-size:13.5px;color:var(--sub)}.mstat span{display:flex;align-items:center;gap:5px}.mstat .av{width:20px;height:20px;font-size:10px;margin:0}.mstat b{color:var(--ink)}
+.mfil{margin-bottom:10px}
+.mlist{display:grid;gap:7px;margin-bottom:12px}
+.mrow{display:flex;align-items:center;gap:11px;padding:11px 12px;border-radius:14px;background:var(--card);border:1px solid var(--line);cursor:pointer;transition:opacity .25s}
+.mrow.yuna{border-left:4px solid var(--y)}.mrow.jiwoo{border-left:4px solid var(--j)}
+.mchk{width:28px;height:28px;border-radius:50%;border:2px solid var(--line);color:transparent;flex:none;display:grid;place-items:center;background:var(--card);transition:background .2s,border-color .2s,transform .2s}
+.mrow.yuna .mchk,.mihead.yuna .mchk{border-color:color-mix(in srgb,var(--y) 55%,var(--line))}.mrow.jiwoo .mchk,.mihead.jiwoo .mchk{border-color:color-mix(in srgb,var(--j) 60%,var(--line))}
+.mchk.ro{cursor:default;opacity:.75}
+.done .mchk{color:#fff;border-color:transparent!important}.mrow.yuna.done .mchk,.mihead.yuna.done .mchk{background:var(--y)}.mrow.jiwoo.done .mchk,.mihead.jiwoo.done .mchk{background:var(--j)}
+.mchk.pop{animation:mpop .35s ease-out}@keyframes mpop{50%{transform:scale(1.3)}}
+.mtx{flex:1;min-width:0}.mtx b{display:block;font-size:15px;font-weight:500;line-height:1.4;word-break:break-all}
+.mtx small{display:flex;align-items:center;gap:4px;font-size:12px;color:var(--sub);margin-top:3px}.mtx small .av{width:16px;height:16px;font-size:9px}
+.mrow.done .mtx b{text-decoration:line-through;text-decoration-color:color-mix(in srgb,var(--sub) 60%,transparent);color:var(--sub)}
+.mblind{color:var(--sub);font-weight:700}
+.mcn2{font-size:12px;color:var(--sub);flex:none}
+.mdh{display:flex;justify-content:space-between;width:100%;padding:10px 4px;font-size:13.5px;font-weight:700;color:var(--sub)}.mdh span{font-weight:400}
+.mihead{display:flex;gap:12px;align-items:flex-start;padding:14px;border-radius:16px;margin-bottom:12px;background:var(--soft)}
+.mihead.yuna{background:color-mix(in srgb,var(--y) 12%,var(--card))}.mihead.jiwoo{background:color-mix(in srgb,var(--j) 15%,var(--card))}
+.mchk.big{width:34px;height:34px;margin-top:1px}
+.mihead h2{font-size:18px;line-height:1.35;margin:0 0 4px;word-break:break-all}.mihead p{margin:0;font-size:13px;color:var(--sub);line-height:1.5}
+.mihead.done h2{text-decoration:line-through;text-decoration-color:color-mix(in srgb,var(--sub) 50%,transparent)}
+.mbl{display:flex;gap:11px;align-items:center;padding:12px;border-radius:12px;background:var(--soft);cursor:pointer;margin-top:10px}
+.mbl input{position:absolute;opacity:0;pointer-events:none}.mbl b{display:block;font-size:14.5px}.mbl small{font-size:12.5px;color:var(--sub)}
+.sw2{width:42px;height:25px;border-radius:99px;background:var(--line);position:relative;flex:none;transition:background .2s}
+.sw2::after{content:"";position:absolute;top:3px;left:3px;width:19px;height:19px;border-radius:50%;background:#fff;box-shadow:0 1px 3px #0003;transition:transform .2s}
+.mbl input:checked+.sw2{background:var(--ink)}.mbl input:checked+.sw2::after{transform:translateX(17px)}
+@media(max-width:600px){.subnav{margin-bottom:10px}.subnav button{min-height:28px;padding:4px 16px;font-size:13px}.mrow{padding:10px}.mtx b{font-size:14.5px}}
+.bub.veil{color:var(--sub);background:var(--soft)!important;font-size:13px}
+.strow{display:flex;gap:6px;align-items:center}.strow input{flex:1 1 auto;min-width:0;width:100%}.strow .btn{flex:none;min-height:36px;padding:0 12px;font-size:13px}
+.strow,.pfst{align-items:stretch}
+.strow input,.pfst input{height:42px;box-sizing:border-box;padding-block:0;margin:0}
+.strow .btn,.pfst .btn{height:42px;min-height:0;box-sizing:border-box;padding:0 14px;font-size:14px;margin:0;display:inline-flex;align-items:center}
+.crow{min-width:0}.crow textarea{min-width:0;flex:1 1 auto}.crow .send,.crow .attach{flex:none}
+
+/* 댓글 입력칸: 둥근 알약 모양, 글이 길어지면 위로 늘어나요 */
+.crow{align-items:flex-end;gap:6px}
+.crow textarea{min-height:38px!important;height:38px;max-height:132px;padding:9px 15px!important;line-height:20px;font-size:15px!important;border-radius:19px!important;border:0!important;background:var(--soft)!important;box-shadow:none!important;overflow-y:auto}
+.crow textarea:focus{outline:0;box-shadow:0 0 0 1.5px color-mix(in srgb,var(--y) 45%,transparent)!important}
+.crow .send{min-height:38px!important;height:38px;border-radius:19px!important;padding:0 14px!important;font-size:13.5px}
+.crow .attach{width:38px!important;height:38px!important;border-radius:50%!important;border:0!important;background:var(--soft)}
+.chat{gap:13px}
+.cm{margin-bottom:16px}
+html,body{touch-action:manipulation}
+
+/* 꾹 눌러 글자 선택 막기 (입력칸은 그대로) */
+body{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+input,textarea,[contenteditable]{-webkit-user-select:text;user-select:text;-webkit-touch-callout:default}
+img{-webkit-user-drag:none}
+.lb{overflow:hidden;touch-action:none}.lb img{will-change:transform;transform-origin:center center;cursor:zoom-in}
+/* 입력칸이 남은 너비만 쓰고 버튼 자리는 항상 남기기 (아이폰 textarea 기본 너비 무시) */
+.composer{box-sizing:border-box;max-width:100%;min-width:0}
+.crow{width:100%;box-sizing:border-box}
+.crow textarea{flex:1 1 0%!important;width:0!important;min-width:0!important;box-sizing:border-box}
+.sheet,.panel{overflow-x:hidden}
+/* 사진은 꾹 눌러 저장할 수 있게 */
+img,video,[data-rx] img{-webkit-touch-callout:default!important}
+.rxsep{width:1px;align-self:stretch;margin:6px 3px;background:var(--line)}
+.rxpop .rxcp{width:auto!important;padding:0 12px;font-size:14px!important;font-weight:500;border-radius:999px!important;color:var(--ink)}
 </style>
 </head>
 <body>
 <div id="demo" class="demo hidden">미리보기 모드예요. 예시 데이터라 새로고침하면 사라져요.</div>
 <header class="top">
   <div class="brand" role="button" tabindex="0" title="캘린더로"><span class="dots"><i></i><i></i></span><h1>애기 · 언니 아카이브</h1></div>
-  <nav class="tabs"><button data-v="cal" class="on">캘린더</button><button data-v="album">사진첩</button><button data-v="music">음악</button><button data-v="movies">영상</button><button data-v="draw">그리기</button><button data-v="news">새소식</button></nav>
+  <nav class="tabs"><button data-v="cal" class="on">캘린더</button><button data-v="album">사진첩</button><button data-v="music">음악</button><button data-v="movies">영상</button><button data-v="draw">그리고</button><button data-v="news">새소식</button></nav>
   <button class="me" id="meBtn" title="나·프로필 사진·테마 설정" aria-label="설정"></button>
 </header>
 <main id="main"></main>
@@ -503,7 +569,7 @@ const av = (w, cls='') => { const a = S.profiles?.[w]?.avatar; return a ? `<span
 const kdate = s => { const d = parse(s); return `${d.getFullYear()}년 ${d.getMonth()+1}월 ${d.getDate()}일`; };
 const stamp = iso => { const d = new Date(iso); return `${d.getMonth()+1}/${d.getDate()} ${pad(d.getHours())}:${pad(d.getMinutes())}`; };
 
-const S = { me: store.get('archive.me') || '', view:'cal', month:null, sel: ymd(new Date()), fl: (()=>{ try{ const v = JSON.parse(localStorage.getItem('archive.fl')); if(Array.isArray(v)) return new Set(v); }catch(e){} return new Set(['yuna','jiwoo','us','memory']); })(),
+const S = { me: store.get('archive.me') || '', view:'cal', sub: store.get('archive.sub') || 'draw', missions:[], mchats:[], month:null, sel: ymd(new Date()), fl: (()=>{ try{ const v = JSON.parse(localStorage.getItem('archive.fl')); if(Array.isArray(v)) return new Set(v); }catch(e){} return new Set(['yuna','jiwoo','us','memory']); })(),
   events:[], echats:[], posts:[], comments:[], folders:[], music:[], movies:[], folder:'all', seen:{}, profiles:{}, newsCut:'', openEvent:null, openPost:null, replyTo:null };
 S.month = new Date(); S.month.setDate(1);
 
@@ -559,7 +625,7 @@ async function prep(file){
 
 /* ===== 데이터: 미리보기(브라우저 안) / Supabase ===== */
 const LocalAPI = {
-  db:{events:[], echats:[], posts:[], comments:[], folders:[], music:[], movies:[], seen:{}, profiles:{}},
+  db:{events:[], echats:[], posts:[], comments:[], folders:[], music:[], movies:[], missions:[], mchats:[], seen:{}, profiles:{}},
   async init(){ const t = new Date(), d = n => { const x = new Date(t); x.setDate(t.getDate()+n); return ymd(x); };
     const svg = (a,b) => 'data:image/svg+xml,'+encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400"><defs><linearGradient id="g" x2="1" y2="1"><stop offset="0" stop-color="${a}"/><stop offset="1" stop-color="${b}"/></linearGradient></defs><rect width="400" height="400" fill="url(#g)"/><circle cx="290" cy="110" r="50" fill="#fff8"/><path d="M0 330 140 210 250 300 320 250 400 310V400H0Z" fill="#0002"/></svg>`);
     const ago = m => new Date(Date.now() - m*60000).toISOString(); const now = ago(600);
@@ -575,6 +641,8 @@ const LocalAPI = {
     this.db.movies = [{"id": "mv0", "title": "영원", "year": 2025, "watched_on": "2026-03-29", "meta_tried": true, "added_by": "jiwoo", "import_key": "seed:00", "created_at": "2026-11-01T00:00:00Z"}, {"id": "mv1", "title": "럭키, 아파트", "year": 2024, "watched_on": "2026-03-22", "meta_tried": true, "added_by": "jiwoo", "import_key": "seed:01", "created_at": "2026-11-01T00:00:00Z"}, {"id": "mv2", "title": "십 개월의 미래", "year": null, "watched_on": "2026-03-27", "meta_tried": true, "added_by": "jiwoo", "import_key": "seed:02", "created_at": "2026-11-01T00:00:00Z"}, {"id": "mv3", "title": "벅스 라이프", "year": null, "watched_on": "2026-04-05", "meta_tried": true, "added_by": "jiwoo", "import_key": "seed:03", "created_at": "2026-11-01T00:00:00Z"}, {"id": "mv4", "title": "레드 룸스", "year": null, "watched_on": "2026-03-28", "meta_tried": true, "added_by": "jiwoo", "import_key": "seed:04", "created_at": "2026-11-01T00:00:00Z"}, {"id": "mv5", "title": "나를 구하지 마세요", "year": null, "watched_on": "2026-04-02", "meta_tried": true, "added_by": "jiwoo", "import_key": "seed:05", "created_at": "2026-11-01T00:00:00Z"}, {"id": "mv6", "title": "힘을 낼 시간", "year": null, "watched_on": "2026-03-21", "meta_tried": true, "added_by": "jiwoo", "import_key": "seed:06", "created_at": "2026-11-01T00:00:00Z"}, {"id": "mv7", "title": "초(超) 가구야 공주!", "year": 2026, "watched_on": "2026-04-04", "meta_tried": true, "added_by": "jiwoo", "import_key": "seed:07", "created_at": "2026-11-01T00:00:00Z"}, {"id": "mv8", "title": "장난스런 키스", "year": null, "watched_on": "2026-04-04", "meta_tried": true, "added_by": "jiwoo", "import_key": "seed:08", "created_at": "2026-11-01T00:00:00Z"}, {"id": "mv9", "title": "빅 볼드 뷰티풀", "year": 2025, "watched_on": "2026-04-12", "meta_tried": true, "added_by": "jiwoo", "import_key": "seed:09", "created_at": "2026-11-01T00:00:00Z"}, {"id": "mv10", "title": "곤돌라", "year": null, "watched_on": "2026-05-09", "meta_tried": true, "added_by": "jiwoo", "import_key": "seed:10", "created_at": "2026-11-01T00:00:00Z"}, {"id": "mv11", "title": "2001 스페이스 오디세이", "year": null, "watched_on": "2026-05-09", "meta_tried": true, "added_by": "jiwoo", "import_key": "seed:11", "created_at": "2026-11-01T00:00:00Z"}, {"id": "mv12", "title": "하늘에서 음식이 내린다면", "year": null, "watched_on": null, "meta_tried": true, "added_by": "jiwoo", "import_key": "seed:12", "created_at": "2026-11-01T00:00:00Z"}, {"id": "mv13", "title": "굿 보이", "year": null, "watched_on": "2026-04-25", "meta_tried": true, "added_by": "jiwoo", "import_key": "seed:13", "created_at": "2026-11-01T00:00:00Z"}, {"id": "mv14", "title": "하우스메이드", "year": 2025, "watched_on": "2026-05-03", "meta_tried": true, "added_by": "jiwoo", "import_key": "seed:14", "created_at": "2026-11-01T00:00:00Z"}, {"id": "mv15", "title": "아쿠아리움이 문을 닫으면", "year": 2026, "watched_on": null, "meta_tried": true, "added_by": "jiwoo", "import_key": "seed:15", "created_at": "2026-11-01T00:00:00Z"}, {"id": "mv16", "title": "디스클로저 데이", "year": 2026, "watched_on": null, "meta_tried": true, "added_by": "jiwoo", "import_key": "seed:16", "created_at": "2026-11-01T00:00:00Z"}, {"id": "mv17", "title": "토이 스토리 5", "year": 2026, "watched_on": "2026-06-17", "meta_tried": true, "added_by": "jiwoo", "import_key": "seed:17", "created_at": "2026-11-01T00:00:00Z"}, {"id": "mv18", "title": "월남보살", "year": 2025, "watched_on": null, "meta_tried": true, "added_by": "jiwoo", "import_key": "seed:18", "created_at": "2026-11-01T00:00:00Z"}, {"id": "mv19", "title": "재현의 학습", "year": 2025, "watched_on": null, "meta_tried": true, "added_by": "jiwoo", "import_key": "seed:19", "created_at": "2026-11-01T00:00:00Z"}, {"id": "mv20", "title": "선희이모", "year": 2026, "watched_on": null, "meta_tried": true, "added_by": "jiwoo", "import_key": "seed:20", "created_at": "2026-11-01T00:00:00Z"}, {"id": "mv21", "title": "메트로폴리탄 라이드", "year": 2026, "watched_on": null, "meta_tried": true, "added_by": "jiwoo", "import_key": "seed:21", "created_at": "2026-11-01T00:00:00Z"}, {"id": "mv22", "title": "마법소녀 김철수", "year": 2026, "watched_on": null, "meta_tried": true, "added_by": "jiwoo", "import_key": "seed:22", "created_at": "2026-11-01T00:00:00Z"}, {"id": "mv23", "title": "캣 하우스", "year": 2026, "watched_on": null, "meta_tried": true, "added_by": "jiwoo", "import_key": "seed:23", "created_at": "2026-11-01T00:00:00Z"}, {"id": "mv24", "title": "이별시대사랑", "year": 2026, "watched_on": null, "meta_tried": true, "added_by": "jiwoo", "import_key": "seed:24", "created_at": "2026-11-01T00:00:00Z"}, {"id": "mv25", "title": "스파이더맨: 브랜드 뉴 데이", "year": 2026, "watched_on": null, "meta_tried": true, "added_by": "jiwoo", "import_key": "seed:25", "created_at": "2026-11-01T00:00:00Z"}, {"id": "mv26", "title": "에시오 트롯: 거북아 거북아", "year": 2015, "watched_on": null, "meta_tried": true, "added_by": "jiwoo", "import_key": "seed:26", "created_at": "2026-11-01T00:00:00Z"}, {"id": "mv27", "title": "명탐정 코난: 하이웨이의 타천사", "year": 2026, "watched_on": "2026-08-12", "meta_tried": true, "added_by": "jiwoo", "import_key": "seed:27", "created_at": "2026-11-01T00:00:00Z"}, {"id": "mv28", "title": "군체", "year": null, "watched_on": "2026-05-21", "meta_tried": true, "added_by": "jiwoo", "import_key": "seed:28", "created_at": "2026-11-01T00:00:00Z"}, {"id": "mv29", "title": "호프", "year": null, "watched_on": "2026-07-17", "meta_tried": true, "added_by": "jiwoo", "import_key": "seed:29", "created_at": "2026-11-01T00:00:00Z"}, {"id": "mv30", "title": "프랙티컬 매직", "year": 1998, "watched_on": "2026-08-31", "meta_tried": true, "added_by": "jiwoo", "import_key": "seed:30", "created_at": "2026-11-01T00:00:00Z"}, {"id": "mv31", "title": "명탐정 코난: 30호 살인 사건", "year": 2026, "watched_on": null, "meta_tried": true, "added_by": "jiwoo", "import_key": "seed:31", "created_at": "2026-11-01T00:00:00Z"}];
     this.db.folders = [{id:'f1', name:'게임', sort:1},{id:'f2', name:'인증', sort:2},{id:'f3', name:'일상', sort:3},{id:'f4', name:'그림', sort:4}];
     this.db.posts = [{id:'p1', folder_id:'f3', author:'yuna', caption:'한강 산책한 날', memory_date:d(-3), media:[{kind:'image', url:svg('#ffcf5c','#f07a8f'), thumb:svg('#ffcf5c','#f07a8f')},{kind:'image', url:svg('#9b7bff','#5ec8e5'), thumb:svg('#9b7bff','#5ec8e5')}], created_at:ago(30)}];
+    this.db.missions = [{id:'mi1', owner:'yuna', title:'한강에서 자전거 타기', blind:false, done:false, created_at:ago(900)},{id:'mi2', owner:'jiwoo', title:'언니가 몰래 준비하는 선물', blind:true, done:false, created_at:ago(500)},{id:'mi3', owner:'jiwoo', title:'토익 시험 접수하기', blind:false, done:true, done_at:ago(60), created_at:ago(3000)}];
+    this.db.mchats = [{id:'mc1', mission_id:'mi1', author:'jiwoo', body:'이번 주말 어때?', react:{}, created_at:ago(400)},{id:'mc2', mission_id:'mi2', author:'jiwoo', body:'포장지 샀다', react:{}, created_at:ago(300)}];
     this.db.comments = [{id:'m1', post_id:'p1', parent_id:null, author:'jiwoo', body:'이날 노을 진짜 예뻤어', memory_date:null, media:[], created_at:now},
       {id:'m2', post_id:'p1', parent_id:'m1', author:'yuna', body:'다음 주에 또 가자', memory_date:null, media:[], created_at:ago(5)}]; },
   async all(){ return structuredClone(this.db); },
@@ -587,11 +655,12 @@ const LocalAPI = {
     if(tb==='events') this.db.echats = this.db.echats.filter(c=>c.event_id!==id);
     if(tb==='posts') this.db.comments = this.db.comments.filter(c=>c.post_id!==id);
     if(tb==='folders') this.db.posts.forEach(p => { if(p.folder_id===id) p.folder_id = null; });
-    if(tb==='comments') this.db.comments = this.db.comments.filter(c=>c.parent_id!==id); },
+    if(tb==='comments') this.db.comments = this.db.comments.filter(c=>c.parent_id!==id);
+    if(tb==='missions') this.db.mchats = this.db.mchats.filter(c=>c.mission_id!==id); },
   async upload(p){ return {kind:p.kind, url:URL.createObjectURL(p.blob), thumb:p.thumb ? URL.createObjectURL(p.thumb) : ''}; },
   async removeFiles(){}
 };
-const TB = {events:'events', echats:'event_comments', posts:'posts', comments:'comments', folders:'folders', music:'music', movies:'movies'};
+const TB = {events:'events', echats:'event_comments', posts:'posts', comments:'comments', folders:'folders', music:'music', movies:'movies', missions:'missions', mchats:'mission_comments'};
 const CloudAPI = {
   sb:null,
   async init(pass){ this.pass = pass; this.sb = window.supabase.createClient(CFG.SUPABASE_URL, CFG.SUPABASE_ANON_KEY, {global:{headers:{'x-archive-pass':pass}}, auth:{persistSession:false}});
@@ -599,7 +668,8 @@ const CloudAPI = {
   async all(){ const q = t => this.sb.from(t).select('*').order('created_at');
     const r = await Promise.all([q('events'), q('event_comments'), q('posts'), q('comments'), this.sb.from('seen').select('*'), this.sb.from('profiles').select('*'), this.sb.from('folders').select('*').order('sort').order('created_at'), this.sb.from('music').select('*').order('shared_at', {ascending:false}), this.sb.from('movies').select('*').order('created_at')]);
     const bad = r.find(x=>x.error); if(bad) throw bad.error;
-    return {events:r[0].data, echats:r[1].data, posts:r[2].data, comments:r[3].data, seen:Object.fromEntries(r[4].data.map(x=>[x.who, x.seen_at])), profiles:Object.fromEntries(r[5].data.map(x=>[x.who, x])), folders:r[6].data, music:r[7].data, movies:r[8].data}; },
+    const opt = async t => { const x = await q(t); return x.error ? [] : x.data; }; const [missions, mchats] = await Promise.all([opt('missions'), opt('mission_comments')]);
+    return {events:r[0].data, echats:r[1].data, posts:r[2].data, comments:r[3].data, seen:Object.fromEntries(r[4].data.map(x=>[x.who, x.seen_at])), profiles:Object.fromEntries(r[5].data.map(x=>[x.who, x])), folders:r[6].data, music:r[7].data, movies:r[8].data, missions, mchats}; },
   async saveProfile(who, patch){ const {error} = await this.sb.from('profiles').upsert({who, ...patch, updated_at:new Date().toISOString()}); if(error) throw error; },
   async markSeen(who, at){ await this.sb.from('seen').upsert({who, seen_at:at}); },
   async saveSub(endpoint, who, sub){ const {error} = await this.sb.from('push_subs').upsert({endpoint, who, sub}); if(error) throw error; },
@@ -621,7 +691,7 @@ const CloudAPI = {
 };
 let API = DEMO ? LocalAPI : CloudAPI;
 
-async function refresh(){ try{ Object.assign(S, await API.all()); notifyNew(); if(S.view==='news' && unread()) await seeNow(); render(); if(S.openPost) renderComments(); if(S.openEvent) renderChat(); }
+async function refresh(){ try{ Object.assign(S, await API.all()); notifyNew(); if(S.view==='news' && unread()) await seeNow(); render(); if(S.openPost) renderComments(); if(S.openEvent) renderChat(); if(S.openMission) Mission.renderChat(); }
   catch(e){ console.error(e); toast('불러오지 못했어요. 인터넷 연결을 확인해 주세요'); } }
 async function uploadAll(files, onStep){ const out = []; for(let i=0;i<files.length;i++){ onStep?.(i+1, files.length); out.push(await API.upload(files[i])); } return out; }
 
@@ -632,6 +702,7 @@ function memories(){ const L = [];
   for(const p of S.posts) if(p.memory_date) L.push({date:p.memory_date, post:p, tag:'사진', title:p.caption||'', thumb:p.media?.[0]?.thumb, who:p.author, kind:'사진첩 글'});
   for(const c of S.comments) if(c.memory_date){ const p = S.posts.find(x=>x.id===c.post_id); if(p) L.push({date:c.memory_date, post:p, cm:c, tag:'사진', title:c.body||p.caption||'', thumb:(c.media?.[0]||p.media?.[0])?.thumb, who:c.author, kind:c.parent_id?'답글':'댓글'}); }
   for(const m of S.movies) if(m.watched_on) L.push({date:m.watched_on, movie:m, tag:'영상', title:m.title, thumb:m.poster, who:m.added_by, kind:'영상'});
+  for(const m of S.missions) if(m.done && m.done_at) L.push({date:ymd(new Date(m.done_at)), mission:m, tag:'미션', title:m.title, who:m.owner, kind:'미션'});
   return L; }
 function dayMap(){ const m = {}; const add = (d,x) => (m[d] ||= []).push(x); const f = S.fl;
   for(const e of S.events) if(f.has(e.owner)) evDays(e).forEach(d => add(d, {t:'ev', e}));
@@ -655,6 +726,7 @@ function renderCal(){ const y = S.month.getFullYear(), mo = S.month.getMonth(); 
   const sd = parse(S.sel); const L = m[S.sel]||[];
   const agenda = L.length ? L.map(x => x.t==='ev'
       ? `<button class="item ${x.e.owner}" data-ev="${x.e.id}"><span class="bar"></span><span style="flex:1"><b>${esc(x.e.title)}</b><small>${esc(timeText(x.e))} · ${OWN[x.e.owner]||''}${chatCount(x.e.id)}</small></span></button>`
+      : x.x.mission ? `<button class="item memory" data-go="mi-${x.x.mission.id}"><span style="flex:1"><b>${memLabel(x.x)}</b><small>추억 · ${WHO[x.x.who]}의 미션 달성</small></span></button>`
       : x.x.movie ? `<button class="item memory" data-go="movies">${x.x.thumb?`<img src="${esc(x.x.thumb)}" alt="">`:''}<span style="flex:1"><b>${memLabel(x.x)}</b><small>추억 · ${KIND[x.x.movie.kind]||'영화'}${x.x.movie.year?` · ${x.x.movie.year}`:''}</small></span></button>`
       : `<button class="item memory" data-post="${x.x.post.id}" data-cm="${x.x.cm?.id||''}">${x.x.thumb?`<img src="${esc(x.x.thumb)}" alt="">`:''}<span style="flex:1"><b>${memLabel(x.x)}</b><small>추억 · ${x.x.kind} · ${WHO[x.who]||''}</small></span></button>`).join('')
     : `<div class="empty">이날은 아직 기록이 없어요</div>`;
@@ -725,10 +797,11 @@ function rxRow(c){ const r = c.react || {}; const ws = ['yuna','jiwoo'].filter(w
   return `<div class="rxs">${ws.map(w => `<span class="rx ${w}${w===S.me?' me':''}" ${w===S.me?`data-rxoff="${c.id}"`:''} title="${WHO[w]}">${RXE[r[w]]}</span>`).join('')}</div>`; }
 async function setReact(tb, id, key){ const L = S[tb], c = L.find(x=>x.id===id); if(!c) return; const prev = c.react || {};
   const next = {...prev}; if(!key || next[S.me]===key) delete next[S.me]; else next[S.me] = key;
-  c.react = next; tb==='echats' ? renderChat() : renderComments();
-  try{ await API.put(tb, {id, react:next}); } catch(err){ console.error(err); c.react = prev; tb==='echats' ? renderChat() : renderComments(); toast('표정을 남기지 못했어요'); } }
+  c.react = next; tb==='echats' ? renderChat() : tb==='mchats' ? Mission.renderChat() : renderComments();
+  try{ await API.put(tb, {id, react:next}); } catch(err){ console.error(err); c.react = prev; tb==='echats' ? renderChat() : tb==='mchats' ? Mission.renderChat() : renderComments(); toast('표정을 남기지 못했어요'); } }
 function rxPicker(el, tb, id){ document.querySelector('.rxpop')?.remove(); const cur = (S[tb].find(x=>x.id===id)?.react||{})[S.me];
-  const pop = document.createElement('div'); pop.className = 'rxpop'; pop.innerHTML = RX.map(([k,e]) => `<button data-k="${k}" class="${cur===k?'on':''}">${e}</button>`).join('');
+  const pop = document.createElement('div'); pop.className = 'rxpop'; const body = (S[tb].find(x=>x.id===id)?.body || '').trim();
+  pop.innerHTML = RX.map(([k,e]) => `<button data-k="${k}" class="${cur===k?'on':''}">${e}</button>`).join('') + (body ? '<span class="rxsep"></span><button data-copy class="rxcp">복사</button>' : '');
   document.body.appendChild(pop); const r = el.getBoundingClientRect(), w = pop.offsetWidth, h = pop.offsetHeight;
   pop.style.left = Math.max(8, Math.min(innerWidth - w - 8, r.left + r.width/2 - w/2)) + 'px';
   pop.style.top = (r.top - h - 8 > 8 ? r.top - h - 8 : r.bottom + 8) + 'px';
@@ -736,16 +809,19 @@ function rxPicker(el, tb, id){ document.querySelector('.rxpop')?.remove(); const
   const done = () => { pop.remove(); el.classList.remove('rxing'); document.removeEventListener('pointerdown', out, true); };
   const out = e => { if(!pop.contains(e.target)){ e.preventDefault(); e.stopPropagation(); done(); } };
   setTimeout(() => document.addEventListener('pointerdown', out, true), 0);
-  pop.onclick = e => { const b = e.target.closest('button'); if(!b) return; done(); setReact(tb, id, b.dataset.k); }; }
+  pop.onclick = async e => { const b = e.target.closest('button'); if(!b) return; done();
+    if(b.dataset.copy !== undefined){ try{ await navigator.clipboard.writeText(body); toast('복사했어요'); }
+      catch(err){ const t = document.createElement('textarea'); t.value = body; t.style.cssText = 'position:fixed;opacity:0'; document.body.append(t); t.select(); try{ document.execCommand('copy'); toast('복사했어요'); }catch(_){ toast('복사하지 못했어요'); } t.remove(); } return; }
+    setReact(tb, id, b.dataset.k); }; }
 function bindReact(box){ if(box._rx) return; box._rx = true; let t = null, sx = 0, sy = 0, fired = false;
   const cancel = () => { clearTimeout(t); t = null; };
-  box.addEventListener('pointerdown', e => { const el = e.target.closest('[data-rx]'); if(!el) return; fired = false; sx = e.clientX; sy = e.clientY;
+  box.addEventListener('pointerdown', e => { const el = e.target.closest('[data-rx]'); if(!el || e.target.closest('img,video,[data-cmm]')) return; fired = false; sx = e.clientX; sy = e.clientY;
     cancel(); t = setTimeout(() => { fired = true; const [tb, id] = el.dataset.rx.split(':'); rxPicker(el, tb, id); }, 450); });
   box.addEventListener('pointermove', e => { if(t && Math.hypot(e.clientX-sx, e.clientY-sy) > 10) cancel(); });
   ['pointerup','pointercancel','scroll'].forEach(k => box.addEventListener(k, cancel, true));
   box.addEventListener('click', e => { if(fired){ e.preventDefault(); e.stopPropagation(); fired = false; return; }
-    const off = e.target.closest('[data-rxoff]'); if(off){ e.stopPropagation(); const tb = box.id==='chat' ? 'echats' : 'comments'; setReact(tb, off.dataset.rxoff, null); } }, true);
-  box.addEventListener('contextmenu', e => { if(e.target.closest('[data-rx]')) e.preventDefault(); }); }
+    const off = e.target.closest('[data-rxoff]'); if(off){ e.stopPropagation(); const tb = box.id==='chat' ? 'echats' : box.id==='mchat' ? 'mchats' : 'comments'; setReact(tb, off.dataset.rxoff, null); } }, true);
+  box.addEventListener('contextmenu', e => { if(e.target.closest('[data-rx]') && !e.target.closest('img,video')) e.preventDefault(); }); }
 
 /* ===== 사진첩 ===== */
 const cover = m => m ? `<div class="cover"><img src="${esc(m.thumb||m.url)}" alt="" loading="lazy">${m.kind==='video'?'<span class="play"></span>':''}</div>` : `<div class="cover"></div>`;
@@ -881,6 +957,11 @@ function activity(){ const me = S.me, A = []; if(!me) return A; const by = w => 
   for(const p of S.posts) if(by(p.author)) A.push({at:p.created_at, who:p.author, text:'사진첩에 새 글을 올렸어요', sub:p.caption || `사진·동영상 ${p.media?.length||0}개`, thumb:p.media?.[0]?.thumb, go:'post-'+p.id});
   for(const c of S.comments) if(by(c.author)){ const p = S.posts.find(x=>x.id===c.post_id); if(!p) continue;
     A.push({at:c.created_at, who:c.author, text:c.parent_id?'답글을 남겼어요':'댓글을 남겼어요', sub:c.body || '사진·동영상을 올렸어요', thumb:(c.media?.[0]||p.media?.[0])?.thumb, go:'cm-'+c.id}); }
+  const mT = m => !m ? '지운 미션' : (m.blind && !m.done && m.owner !== me) ? '비밀 미션' : m.title;
+  for(const m of S.missions){ if(by(m.owner)) A.push({at:m.created_at, who:m.owner, text:m.blind?'비밀 미션을 추가했어요 🙈':'미션을 추가했어요', sub:m.blind?'달성하면 무엇이었는지 알 수 있어요':m.title, go:'mi-'+m.id});
+    if(by(m.owner) && m.done && m.done_at) A.push({at:m.done_at, who:m.owner, text:'미션을 달성했어요 ✓', sub:m.title, go:'mi-'+m.id}); }
+  for(const c of S.mchats) if(by(c.author)){ const m = S.missions.find(x=>x.id===c.mission_id), v = m && m.blind && !m.done && m.owner===c.author;
+    A.push({at:c.created_at, who:c.author, text:'미션에 댓글을 남겼어요', sub:`[${mT(m)}] ${v ? '🙈 달성하면 볼 수 있어요' : c.body}`, go:'mi-'+c.mission_id}); }
   return A.sort((a,b) => b.at.localeCompare(a.at)).slice(0, 150); }
 const unread = () => { const cut = S.seen[S.me] || ''; return activity().filter(a => a.at > cut).length; };
 async function seeNow(){ const at = new Date().toISOString(); S.seen[S.me] = at; try{ await API.markSeen(S.me, at); } catch(e){ console.error(e); } }
@@ -896,6 +977,7 @@ function go(t){ const [k, ...rest] = t.split('-'); const id = rest.join('-');
   if(t==='news' || t==='music' || t==='movies'){ openView(t); return; }
   if(k==='ev'){ const e = S.events.find(x=>x.id===id); if(!e){ toast('지워진 일정이에요'); return; } closePost(); S.view = 'cal'; S.sel = e.start_date; const d = parse(e.start_date); S.month = new Date(d.getFullYear(), d.getMonth(), 1); render(); openEvent(id); }
   else if(k==='post'){ if(!S.posts.some(p=>p.id===id)){ toast('지워진 글이에요'); return; } openPost(id); }
+  else if(k==='mi'){ if(!S.missions.some(m=>m.id===id)){ toast('지워진 미션이에요'); return; } closePost(); S.view = 'draw'; S.sub = 'mission'; render(); Mission.open(id); }
   else if(k==='cm'){ const c = S.comments.find(x=>x.id===id); if(!c){ toast('지워진 댓글이에요'); return; } openPost(c.post_id, id); } }
 async function openView(v){ S.view = v; if(v==='news'){ S.newsCut = S.seen[S.me] || ''; await seeNow(); } render(); }
 function route(){ const h = decodeURIComponent(location.hash.slice(1)); if(!h) return; history.replaceState(null, '', location.pathname + location.search); go(h); }
@@ -973,11 +1055,11 @@ function openSettings(){ if(!S.me) return whoGate(); const pr = S.profiles[S.me]
   openSheet(`<div class="sh"><h3>설정</h3><button class="ib cx" data-close aria-label="닫기"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div><div class="sb" id="setb">
     <div class="sec"><h4>이 기기에서 기록하는 사람</h4><div class="seg">${['yuna','jiwoo'].map(w=>`<button type="button" class="${w}${S.me===w?' on':''}" data-me="${w}">${av(w)}${WHO[w]}</button>`).join('')}</div></div>
     <div class="sec"><h4>내 프로필 사진</h4><div class="prof">${av(S.me,'big')}<div class="row" style="flex:1"><button class="btn pri" data-act="avset">사진 고르기</button>${pr.avatar?'<button class="btn" data-act="avdel">기본으로</button>':''}</div></div></div>
-    <div class="sec"><h4>상태 메시지</h4><div class="row"><input type="text" id="stin" maxlength="60" placeholder="예: 오늘은 먼지랑 낮잠 중" value="${esc(pr.status||'')}" style="flex:1"><button class="btn" data-act="stset">저장</button></div></div>
+    <div class="sec"><h4>상태 메시지</h4><div class="strow"><input type="text" id="stin" maxlength="60" placeholder="예: 오늘은 먼지랑 낮잠 중" value="${esc(pr.status||'')}"><button class="btn" data-act="stset">저장</button></div></div>
     <div class="sec"><h4>테마</h4><div class="skins">${SKINS.map(([k,t,a,b])=>`<button data-sk="${k}" class="${k===skin?'on':''}"><i style="background:linear-gradient(90deg,${a} 0 55%,${b} 55%)"></i>${t}</button>`).join('')}</div></div>
     <div class="sec"><h4>화면</h4><div class="modes">${[['auto','자동'],['light','밝게'],['dark','어둡게']].map(([k,t])=>`<button data-md="${k}" class="${k===mode?'on':''}">${t}</button>`).join('')}</div></div>
-    <div class="sec"><h4>사진 저장 공간</h4>${storageStat()}</div>
-    <div class="sec"><h4>가져오기</h4><div class="row" style="flex-wrap:wrap"><button class="btn" data-act="notion">노션에서 가져오기</button><button class="btn" data-act="ics">캘린더 파일(.ics) 가져오기</button></div></div>
+    ${S.me==='jiwoo' ? `<div class="sec"><h4>사진 저장 공간</h4>${storageStat()}</div>
+    <div class="sec"><h4>가져오기</h4><div class="row" style="flex-wrap:wrap"><button class="btn" data-act="notion">노션에서 가져오기</button><button class="btn" data-act="ics">캘린더 파일(.ics) 가져오기</button></div></div>` : ''}
     <p style="color:var(--sub);font-size:14px;margin:0">프로필 사진, 테마, 화면 설정은 ${WHO[S.me]}가 쓰는 모든 기기에 똑같이 적용돼요.</p></div>`);
   $('#setb').onclick = async e => { const b = e.target.closest('button'); if(!b) return;
     if(b.dataset.me){ S.me = b.dataset.me; store.set('archive.me', S.me); S.known = activity()[0]?.at || ''; Push.save(); applyLook(); render(); if(S.openPost) openPost(S.openPost); openSettings(); }
@@ -1071,7 +1153,7 @@ function bindTools(root, board, h = {}){ const sync = () => { root.querySelector
   sync(); }
 
 const Draw = { strokes:[], board:null, ch:null, others:[], ghost:null, buf:{}, timer:null, lastPtr:0,
-  async enter(){ const root = $('#main'); root.innerHTML = `<section class="drawv" id="drawroot"><div class="dhead"><h2>그리기</h2><span class="pres" id="pres"></span></div>${toolsHTML({clear:true, save:true})}<div class="stage"><div class="board"></div></div></section>`;
+  async enter(){ const root = $('#main'); root.innerHTML = `<section class="drawv" id="drawroot">${subNav()}<div class="dhead"><span class="pres" id="pres"></span></div>${toolsHTML({clear:true, save:true})}<div class="stage"><div class="board"></div></div></section>`;
     this.board = new Board(root.querySelector('.board'), {strokes:this.strokes, maxH:() => innerHeight - root.querySelector('.stage').getBoundingClientRect().top - 14, onLocal:(t, d) => this.local(t, d)});
     bindTools(root, this.board, {undo:() => { const id = this.board.undoMine(); if(id) this.send({t:'undo', id}); },
       clear:async () => { if(await ask('그림을 모두 지울까요? 같이 그리는 사람 화면에서도 지워져요')){ this.board.clearAll(); this.send({t:'clear'}); } },
@@ -1115,7 +1197,70 @@ const Draw = { strokes:[], board:null, ch:null, others:[], ghost:null, buf:{}, t
         closeSheet(); await refresh(); toast('사진첩에 저장했어요'); }
       catch(err){ console.error(err); toast('저장하지 못했어요'); btn.disabled = false; btn.textContent = '저장'; } }; }
 };
-function renderDraw(){ if($('#drawroot') && Draw.board){ Draw.pres(); return; } Draw.leave(); Draw.enter(); }
+
+/* ===== 미션 (그리고 > 미션) ===== */
+const Mission = { who: store.get('archive.mwho') || 'all', showDone: store.get('archive.mdone') !== '0',
+  hidden(m){ return m.blind && !m.done && m.owner !== S.me; },
+  label(m){ return this.hidden(m) ? '<span class="mblind">🙈 비밀 미션</span>' : esc(m.title); },
+  row(m){ const n = S.mchats.filter(c=>c.mission_id===m.id).length, mine = m.owner===S.me;
+    return `<div class="mrow ${m.owner}${m.done?' done':''}" data-mopen="${m.id}">
+      <button class="mchk${mine?'':' ro'}" ${mine?`data-mchk="${m.id}"`:'tabindex="-1"'} aria-label="${m.done?'달성 취소':'달성'}"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></button>
+      <div class="mtx"><b>${this.label(m)}</b><small>${av(m.owner)}${WHO[m.owner]}${m.blind?` · ${m.done?'블라인드였던 미션':mine?'🔒 블라인드':'달성하면 공개'}`:''}${m.done && m.done_at?` · ${kdate(ymd(new Date(m.done_at)))} 달성`:''}</small></div>
+      ${n?`<span class="mcn2">💬 ${n}</span>`:''}</div>`; },
+  render(){ const L = S.missions.filter(m => this.who==='all' || m.owner===this.who);
+    const sortT = (a,b) => (a.created_at||'').localeCompare(b.created_at||'');
+    const todo = L.filter(m=>!m.done).sort(sortT), done = L.filter(m=>m.done).sort((a,b) => (b.done_at||'').localeCompare(a.done_at||''));
+    const cnt = w => { const M = S.missions.filter(m=>m.owner===w); return `${M.filter(m=>m.done).length}/${M.length}`; };
+    $('#main').innerHTML = `<section class="missionv">${subNav()}
+      <div class="filters mfil">${[['all','전체'],['yuna','애기'],['jiwoo','언니']].map(([k,t]) => `<button class="chip${this.who===k?' on':''}" data-mwho="${k}">${k!=='all'?`<i style="background:var(--${k==='yuna'?'y':'j'})"></i>`:''}${t}</button>`).join('')}</div>
+      ${S.missions.length ? `<div class="mlist">${todo.length ? todo.map(m=>this.row(m)).join('') : '<div class="empty">진행 중인 미션이 없어요</div>'}</div>
+      ${done.length ? `<button class="mdh" data-mdone="1">달성한 미션 ${done.length}개 <span>${this.showDone?'접기 ▴':'펼치기 ▾'}</span></button>${this.showDone?`<div class="mlist">${done.map(m=>this.row(m)).join('')}</div>`:''}` : ''}`
+      : '<div class="empty">하고 싶은 것, 해야 하는 것을 미션으로 적어 보세요.<br>블라인드로 적으면 달성할 때까지 상대에게 비밀이에요.</div>'}</section>`;
+    const root = $('#main').querySelector('.missionv');
+    root.onclick = async e => { const t = e.target.closest('[data-mwho],[data-mdone],[data-mchk],[data-mopen]'); if(!t) return; e.stopPropagation();
+      if(t.dataset.mwho){ this.who = t.dataset.mwho; store.set('archive.mwho', this.who); this.render(); }
+      else if(t.dataset.mdone){ this.showDone = !this.showDone; store.set('archive.mdone', this.showDone?'1':'0'); this.render(); }
+      else if(t.dataset.mchk){ this.toggle(t.dataset.mchk, t); }
+      else if(t.dataset.mopen && !e.target.closest('.mchk')) this.open(t.dataset.mopen); }; },
+  async toggle(id, btn){ const m = S.missions.find(x=>x.id===id); if(!m || m.owner!==S.me) return;
+    const done = !m.done, patch = {id, done, done_at: done ? new Date().toISOString() : null};
+    if(btn){ btn.closest('.mrow')?.classList.toggle('done', done); if(done){ btn.classList.add('pop'); navigator.vibrate?.(20); } }
+    try{ await API.put('missions', patch); Object.assign(m, patch); if(done) toast(m.blind ? '미션 달성! 이제 상대도 내용을 볼 수 있어요' : '미션 달성!'); setTimeout(() => { S.view==='draw' && S.sub==='mission' && this.render(); if(S.openMission===id) this.open(id); }, done ? 380 : 0); }
+    catch(err){ console.error(err); toast('저장하지 못했어요'); this.render(); } },
+  form(m){ const isNew = !m; m = m || {title:'', blind:false};
+    openSheet(`<div class="sh"><h3>${isNew?'새 미션':'미션 수정'}</h3><button class="ib cx" data-close aria-label="닫기"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+    <form class="sb" id="mif"><label class="field"><span>미션</span><textarea name="title" maxlength="300" rows="2" placeholder="예: 같이 한강에서 자전거 타기, 매일 물 2L 마시기" required>${esc(m.title)}</textarea></label>
+      <label class="mbl"><input type="checkbox" name="blind" ${m.blind?'checked':''}><span class="sw2"></span><span><b>블라인드</b><small>달성하기 전까지 ${WHO[S.me==='jiwoo'?'yuna':'jiwoo']}에게 내용이 안 보여요</small></span></label></form>
+    <div class="sf">${isNew?'':'<button class="btn danger" id="midel" style="margin-inline-end:auto">삭제</button>'}<button class="btn" data-close>취소</button><button class="btn pri" id="misave">${isNew?'추가':'저장'}</button></div>`);
+    const f = $('#mif'); setTimeout(() => f.title.focus(), 50); enterToSend(f.title, f); f.onsubmit = e => { e.preventDefault(); $('#misave').click(); };
+    $('#misave').onclick = async () => { const title = f.title.value.trim(); if(!title){ f.title.focus(); return; } const b = $('#misave'); b.disabled = true;
+      try{ const r = await API.put('missions', isNew ? {owner:S.me, title, blind:f.blind.checked, done:false} : {id:m.id, title, blind:f.blind.checked}); closeSheet(); await refresh(); if(!isNew) this.open(m.id); toast(isNew?'미션을 추가했어요':'저장했어요'); }
+      catch(e){ console.error(e); b.disabled = false; toast(/relation|does not exist|schema/i.test(e.message||'') ? 'Supabase에서 7_미션.sql을 먼저 실행해 주세요' : '저장하지 못했어요'); } };
+    if(!isNew) $('#midel').onclick = async () => { if(await ask('이 미션을 지울까요? 댓글도 같이 지워져요')){ await API.del('missions', m.id); closeSheet(); refresh(); } }; },
+  open(id){ const m = S.missions.find(x=>x.id===id); if(!m) return; const mine = m.owner===S.me; S.openMission = id;
+    openSheet(`<div class="sh"><h3>${WHO[m.owner]}의 미션</h3>${mine?'<button class="btn" id="miedit">수정</button>':''}<button class="ib cx" data-close aria-label="닫기"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+    <div class="sb" id="mibody"><div class="mihead ${m.owner}${m.done?' done':''}">
+      <button class="mchk big${mine?'':' ro'}" ${mine?`data-mchk2="1"`:'tabindex="-1"'} aria-label="달성"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></button>
+      <div><h2>${this.hidden(m) ? '🙈 비밀 미션' : esc(m.title)}</h2><p>${m.done ? `${m.done_at?kdate(ymd(new Date(m.done_at))):''} 달성했어요 ✓` : this.hidden(m) ? `${WHO[m.owner]}가 달성하면 무엇이었는지 알 수 있어요. 응원은 지금 남길 수 있어요!` : mine ? (m.blind ? '🔒 블라인드 · 달성하면 상대에게 공개돼요' : '동그라미를 눌러 달성 표시를 해요') : '진행 중이에요'}</p></div></div>
+      <div class="chat" id="mchat"></div></div>
+    <form class="composer" id="mic"><div class="crow"><textarea placeholder="${m.done?'후기를 남겨 보세요':(mine && m.blind)?'🔒 달성 전까지 내 댓글은 상대에게 가려져요':'응원이나 한마디를 남겨 보세요'}" maxlength="2000" rows="1"></textarea><button class="send">보내기</button></div></form>`, 'tall');
+    if(mine){ $('#miedit').onclick = () => { S.openMission = null; this.form(m); }; $('[data-mchk2]').onclick = () => this.toggle(id, $('[data-mchk2]')); }
+    const f = $('#mic'), ta = f.querySelector('textarea'); autoGrow(ta); enterToSend(ta, f);
+    f.onsubmit = async ev => { ev.preventDefault(); const body = ta.value.trim(); if(!body) return; ta.value = ''; ta.style.height = '';
+      try{ await API.put('mchats', {mission_id:id, author:S.me, body}); await refresh(); } catch(err){ console.error(err); ta.value = body; toast('보내지 못했어요'); } };
+    this.renderChat(); },
+  renderChat(){ const box = $('#mchat'); if(!box) return; const L = S.mchats.filter(c=>c.mission_id===S.openMission).sort((a,b) => a.created_at.localeCompare(b.created_at));
+    const sc = box.parentElement, atBottom = sc.scrollHeight - sc.scrollTop - sc.clientHeight < 60;
+    const m = S.missions.find(x=>x.id===S.openMission), veil = m && this.hidden(m);
+    box.innerHTML = L.length ? L.map(c => (veil && c.author===m.owner)
+      ? `<div class="msg ${c.author}">${av(c.author)}<div class="bw"><div class="bub veil">🙈 달성하면 볼 수 있어요</div></div><time>${stamp(c.created_at)}</time></div>`
+      : `<div class="msg ${c.author}${c.author===S.me?' mine':''}">${av(c.author)}<div class="bw"><div class="bub" data-rx="mchats:${c.id}">${esc(c.body)}</div>${rxRow(c)}</div><time>${stamp(c.created_at)}</time></div>`).join('') : '<div class="empty">응원이나 후기를 남겨 보세요</div>';
+    if(atBottom) sc.scrollTop = sc.scrollHeight; bindReact(box); }
+};
+
+function subNav(){ return `<div class="subnav"><button data-sub="draw" class="${S.sub!=='mission'?'on':''}">그리기</button><button data-sub="mission" class="${S.sub==='mission'?'on':''}">미션</button></div>`; }
+function renderDraw(){ if(S.sub==='mission'){ if(Draw.board) Draw.leave(); Mission.render(); return; }
+  if($('#drawroot') && Draw.board){ Draw.pres(); return; } Draw.leave(); Draw.enter(); }
 
 function photoEditor(url, onSave){ const el = document.createElement('div'); el.className = 'drawfs';
   el.innerHTML = `<div class="ph"><button class="btn" data-ed="x">취소</button><b style="margin-inline-end:auto">사진에 그리기</b><button class="btn pri" data-ed="ok">저장</button></div>
@@ -1432,16 +1577,43 @@ function lightbox(media, i, onEdit){ const el = $('#lb'); const show = () => { c
   el.innerHTML = (m.kind==='video' ? `<video src="${esc(m.url)}" controls autoplay playsinline ${m.thumb?`poster="${esc(m.thumb)}"`:''}></video>` : `<img src="${esc(m.url)}" alt="">`) +
     `<button class="x" aria-label="닫기"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button>${onEdit && m.kind!=='video' ? '<button class="ed">그리기</button>' : ''}${media.length>1?'<button class="pv" aria-label="이전">‹</button><button class="nx" aria-label="다음">›</button>':''}`;
   el.querySelector('.x').onclick = close; el.querySelector('.ed')?.addEventListener('click', () => { const k = i; close(); photoEditor(media[k].url, blob => onEdit(k, blob)); }); const pv = el.querySelector('.pv'), nx = el.querySelector('.nx');
-  if(pv){ pv.onclick = () => { i = (i-1+media.length)%media.length; show(); }; nx.onclick = () => { i = (i+1)%media.length; show(); }; } };
+  if(pv){ pv.onclick = () => { i = (i-1+media.length)%media.length; show(); }; nx.onclick = () => { i = (i+1)%media.length; show(); }; }
+  const im = el.querySelector('img'); if(im) zoomable(im, d => { if(media.length>1){ i = (i+d+media.length)%media.length; show(); } }); };
   const close = () => { el.classList.add('hidden'); el.innerHTML = ''; document.removeEventListener('keydown', key); };
   const key = e => { if(e.key==='Escape') close(); if(e.key==='ArrowRight') el.querySelector('.nx')?.click(); if(e.key==='ArrowLeft') el.querySelector('.pv')?.click(); };
   el.classList.remove('hidden'); show(); document.addEventListener('keydown', key); }
+/* 사진 보기 화면: 두 손가락 확대, 두 번 탭 확대, 확대한 상태에서 끌어 이동, 확대 안 했을 땐 옆으로 밀어 넘기기 */
+function zoomable(img, onSwipe){ let z = 1, x = 0, y = 0, pinch = null, pan = null, lastTap = 0, sw = null; const pts = new Map();
+  const clamp = () => { const r = img.getBoundingClientRect(), bw = r.width / z, bh = r.height / z;
+    const mx = Math.max(0, (bw*z - innerWidth)/2), my = Math.max(0, (bh*z - innerHeight)/2); x = Math.max(-mx, Math.min(mx, x)); y = Math.max(-my, Math.min(my, y)); };
+  const apply = (anim) => { img.style.transition = anim ? 'transform .22s ease-out' : 'none'; img.style.transform = `translate(${x}px,${y}px) scale(${z})`; };
+  const zoomAt = (nz, cx, cy) => { nz = Math.max(1, Math.min(5, nz)); const r = img.getBoundingClientRect(), ox = r.left + r.width/2, oy = r.top + r.height/2;
+    x += (cx - ox) * (1 - nz / z); y += (cy - oy) * (1 - nz / z); z = nz; if(z === 1){ x = 0; y = 0; } clamp(); };
+  img.style.touchAction = 'none'; img.draggable = false;
+  img.addEventListener('pointerdown', e => { img.setPointerCapture?.(e.pointerId); pts.set(e.pointerId, [e.clientX, e.clientY]);
+    if(pts.size === 2){ const [a, b] = [...pts.values()]; pinch = {d: Math.hypot(a[0]-b[0], a[1]-b[1]), z}; pan = null; sw = null; }
+    else if(pts.size === 1){ pan = {x: e.clientX, y: e.clientY, ox: x, oy: y}; sw = z === 1 ? {x: e.clientX, y: e.clientY, t: Date.now()} : null; } });
+  img.addEventListener('pointermove', e => { if(!pts.has(e.pointerId)) return; pts.set(e.pointerId, [e.clientX, e.clientY]);
+    if(pinch && pts.size >= 2){ const [a, b] = [...pts.values()]; const d = Math.hypot(a[0]-b[0], a[1]-b[1]); const nz = pinch.z * d / pinch.d; zoomAt(nz, (a[0]+b[0])/2, (a[1]+b[1])/2); apply(); }
+    else if(pan && z > 1){ x = pan.ox + e.clientX - pan.x; y = pan.oy + e.clientY - pan.y; clamp(); apply(); } });
+  const up = e => { pts.delete(e.pointerId); if(pts.size < 2) pinch = null;
+    if(pts.size === 0){ const now = Date.now();
+      if(sw && z === 1){ const dx = e.clientX - sw.x, dy = e.clientY - sw.y; if(Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy)*1.5 && now - sw.t < 600){ onSwipe?.(dx < 0 ? 1 : -1); sw = null; return; } }
+      if(pan && Math.hypot(e.clientX - pan.x, e.clientY - pan.y) < 10){ if(now - lastTap < 300){ z > 1 ? (z = 1, x = 0, y = 0) : zoomAt(2.5, e.clientX, e.clientY); apply(true); lastTap = 0; } else lastTap = now; }
+      pan = null; sw = null; if(z < 1.02){ z = 1; x = 0; y = 0; apply(true); } } };
+  img.addEventListener('pointerup', up); img.addEventListener('pointercancel', up);
+  img.addEventListener('wheel', e => { e.preventDefault(); zoomAt(z * (e.deltaY < 0 ? 1.15 : 1/1.15), e.clientX, e.clientY); apply(); }, {passive:false});
+  img.addEventListener('dblclick', e => { if(e.pointerType) return; }); }
 function openSheet(html, cls){ const sh = $('#sheet'); sh.className = 'sheet' + (cls ? ' '+cls : ''); sh.innerHTML = html; $('#modal').classList.remove('hidden'); }
-function closeSheet(){ $('#modal').classList.add('hidden'); $('#sheet').innerHTML = ''; S.openEvent = null; }
+function closeSheet(){ $('#modal').classList.add('hidden'); $('#sheet').innerHTML = ''; S.openEvent = null; S.openMission = null; }
 function ask(msg){ return new Promise(ok => {
   const box = document.createElement('div'); box.className = 'modal'; box.style.zIndex = 90;
   box.innerHTML = `<div class="sheet" style="width:min(380px,100%)"><div class="sb"><p style="margin:0 0 4px;font-size:17px">${esc(msg)}</p></div><div class="sf"><button class="btn" data-n>취소</button><button class="btn danger" data-y>지우기</button></div></div>`;
   document.body.append(box); const done = v => { box.remove(); ok(v); }; box.querySelector('[data-n]').onclick = () => done(false); box.querySelector('[data-y]').onclick = () => done(true); }); }
+/* 앱처럼: 두 손가락 확대·두 번 탭 확대 막기 (아이폰은 viewport 설정을 무시해서 직접 막아요) */
+['gesturestart','gesturechange','gestureend'].forEach(t => document.addEventListener(t, e => e.preventDefault(), {passive:false}));
+document.addEventListener('touchmove', e => { if(e.touches.length > 1 || (e.scale !== undefined && e.scale !== 1)) e.preventDefault(); }, {passive:false});
+{ let last = 0; document.addEventListener('touchend', e => { const n = Date.now(); if(n - last < 300 && !e.target.closest('input,textarea,select,button,a,canvas,.board')) e.preventDefault(); last = n; }, {passive:false}); }
 /* Ctrl+V / ⌘V로 사진 붙여넣기: 지금 쓰고 있는 입력창(없으면 열려 있는 창의 입력창)에 첨부 */
 document.addEventListener('paste', e => { const L = [...(e.clipboardData?.files || [])].filter(f => /^(image|video)\//.test(f.type)); if(!L.length) return;
   const vis = el => el && el.offsetParent !== null; let c = document.activeElement?.closest?.('form.composer');
@@ -1454,16 +1626,17 @@ function enterToSend(ta, form){ ta.addEventListener('keydown', ev => {
   ev.preventDefault();
   if(ev.ctrlKey || ev.metaKey || ev.shiftKey){ ta.setRangeText('\n', ta.selectionStart, ta.selectionEnd, 'end'); ta.dispatchEvent(new Event('input')); }
   else form.requestSubmit(); }); }
-function autoGrow(ta){ ta.addEventListener('input', () => { ta.style.height = 'auto'; ta.style.height = Math.min(ta.scrollHeight, 140)+'px'; }); }
+function autoGrow(ta){ ta.addEventListener('input', () => { ta.style.height = 'auto'; ta.style.height = Math.max(38, Math.min(ta.scrollHeight, 132))+'px'; }); }
 function render(){ applyLook(); document.querySelectorAll('.tabs button').forEach(b => b.classList.toggle('on', b.dataset.v===S.view));
   const n = unread(); const nt = document.querySelector('.tabs [data-v=news]'); nt.innerHTML = '새소식' + (n ? `<span class="nb">${n>99?'99+':n}</span>` : '');
   document.title = (n ? `(${n}) ` : '') + '애기 · 언니 아카이브'; try{ n ? navigator.setAppBadge?.(n) : navigator.clearAppBadge?.(); }catch(e){}
-  $('#fab').classList.toggle('hidden', S.view==='news' || S.view==='draw');
+  $('#fab').classList.toggle('hidden', S.view==='news' || (S.view==='draw' && S.sub!=='mission'));
   if(S.view!=='draw' && Draw.board) Draw.leave();
-  $('#meBtn').innerHTML = S.me ? `${av(S.me)}<span class="lbl">${WHO[S.me]} · 설정</span>` : '<span>나는?</span>'; $('#fab').textContent = S.view==='cal' ? '+ 일정' : S.view==='music' ? '+ 음악' : S.view==='movies' ? '+ 영상' : '+ 새 글';
+  $('#meBtn').innerHTML = S.me ? `${av(S.me)}<span class="lbl">${WHO[S.me]} · 설정</span>` : '<span>나는?</span>'; $('#fab').textContent = S.view==='cal' ? '+ 일정' : S.view==='music' ? '+ 음악' : S.view==='movies' ? '+ 영상' : S.view==='draw' ? '+ 미션' : '+ 새 글';
   S.view==='cal' ? renderCal() : S.view==='album' ? renderAlbum() : S.view==='music' ? renderMusic() : S.view==='movies' ? renderMovies() : S.view==='draw' ? renderDraw() : renderNews(); }
 
 $('#main').addEventListener('click', e => { const b = e.target.closest('button'); if(!b) return;
+  if(b.dataset.sub){ S.sub = b.dataset.sub; store.set('archive.sub', S.sub); render(); return; }
   if(b.dataset.day){ S.sel = b.dataset.day; const d = parse(S.sel); if(d.getMonth()!==S.month.getMonth()){ S.month = new Date(d.getFullYear(), d.getMonth(), 1); } render(); if(innerWidth<960) $('.agenda')?.scrollIntoView({behavior:'smooth', block:'start'}); }
   else if(b.dataset.mv!==undefined){ const v = +b.dataset.mv; if(v===0){ S.month = new Date(); S.month.setDate(1); S.sel = ymd(new Date()); } else S.month = new Date(S.month.getFullYear(), S.month.getMonth()+v, 1); render(); }
   else if(b.dataset.f){ const k = b.dataset.f, all = ['yuna','jiwoo','us','memory'];
@@ -1485,7 +1658,7 @@ document.querySelectorAll('.tabs button').forEach(b => b.onclick = () => openVie
 { const br = document.querySelector('.brand'); const home = () => { try{ closePost(); }catch(e){} try{ closeSheet(); }catch(e){} const n = new Date(); S.month = new Date(n.getFullYear(), n.getMonth(), 1); S.sel = ymd(n); openView('cal'); scrollTo({top:0, behavior:'smooth'}); };
   br.onclick = home; br.onkeydown = e => { if(e.key==='Enter') home(); }; }
 window.addEventListener('hashchange', () => { if(S.ready) route(); });
-$('#fab').onclick = () => S.view==='cal' ? eventForm() : S.view==='music' ? Music.addSheet() : S.view==='movies' ? Movies.form() : postForm();
+$('#fab').onclick = () => S.view==='draw' ? Mission.form() : S.view==='cal' ? eventForm() : S.view==='music' ? Music.addSheet() : S.view==='movies' ? Movies.form() : postForm();
 $('#meBtn').onclick = () => openSettings();
 document.addEventListener('visibilitychange', () => { if(!document.hidden && S.ready) refresh(); });
 setInterval(() => { if(!document.hidden && S.ready) refresh(); }, 20000);
