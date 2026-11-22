@@ -665,6 +665,7 @@ const LocalAPI = {
       {id:'m2', post_id:'p1', parent_id:'m1', author:'yuna', body:'다음 주에 또 가자', memory_date:null, media:[], created_at:ago(5)}]; },
   async all(){ return structuredClone(this.db); },
   async markSeen(who, at){ this.db.seen[who] = at; },
+  async beat(){},
   async saveSub(){}, async delSub(){},
   async saveProfile(who, patch){ this.db.profiles[who] = {...(this.db.profiles[who]||{}), ...patch}; },
   async uploadBlob(blob){ return URL.createObjectURL(blob); },
@@ -690,6 +691,8 @@ const CloudAPI = {
     return {events:r[0].data, echats:r[1].data, posts:r[2].data, comments:r[3].data, seen:Object.fromEntries(r[4].data.map(x=>[x.who, x.seen_at])), profiles:Object.fromEntries(r[5].data.map(x=>[x.who, x])), folders:r[6].data, music:r[7].data, movies:r[8].data, missions, mchats}; },
   async saveProfile(who, patch){ const {error} = await this.sb.from('profiles').upsert({who, ...patch, updated_at:new Date().toISOString()}); if(error) throw error; },
   async markSeen(who, at){ await this.sb.from('seen').upsert({who, seen_at:at}); },
+  async ping(who, device){ await this.sb.from('last_active').upsert({who, at:new Date().toISOString(), device}); },
+  async beat(who, device){ await this.sb.from('last_active').upsert({who, at:new Date().toISOString(), device}); },
   async saveSub(endpoint, who, sub){ const {error} = await this.sb.from('push_subs').upsert({endpoint, who, sub}); if(error) throw error; },
   async delSub(endpoint){ await this.sb.from('push_subs').delete().eq('endpoint', endpoint); },
   async put(tb, row){ const t = TB[tb]; const {id, created_at, ...rest} = row;
@@ -1631,6 +1634,20 @@ function ask(msg){ return new Promise(ok => {
   const box = document.createElement('div'); box.className = 'modal'; box.style.zIndex = 90;
   box.innerHTML = `<div class="sheet" style="width:min(380px,100%)"><div class="sb"><p style="margin:0 0 4px;font-size:17px">${esc(msg)}</p></div><div class="sf"><button class="btn" data-n>취소</button><button class="btn danger" data-y>지우기</button></div></div>`;
   document.body.append(box); const done = v => { box.remove(); ok(v); }; box.querySelector('[data-n]').onclick = () => done(false); box.querySelector('[data-y]').onclick = () => done(true); }); }
+/* 마지막 접속 기록: 화면에는 안 나오고 Supabase last_active 표에만 남아요 */
+{ const dev = () => /iPhone|iPad/.test(navigator.userAgent) ? (navigator.standalone ? 'iPhone 앱' : 'iPhone Safari') : /Android/.test(navigator.userAgent) ? 'Android' : /Mac/.test(navigator.userAgent) ? 'Mac' : /Windows/.test(navigator.userAgent) ? 'Windows' : '기타';
+  let last = 0; const beat = () => { if(!S.me || !API.beat || document.visibilityState !== 'visible' || Date.now() - last < 60000) return; last = Date.now(); API.beat(S.me, dev()).catch(() => {}); };
+  setInterval(beat, 120000); document.addEventListener('visibilitychange', () => { if(document.visibilityState === 'visible') last = 0; beat(); });
+  ['pointerdown','keydown'].forEach(t => document.addEventListener(t, beat, {passive:true})); setTimeout(beat, 3000); }
+/* 마지막 접속 기록: 화면에는 안 보이고 Supabase의 last_active 표에만 남아요 */
+const Alive = { last:0,
+  device(){ const u = navigator.userAgent; const d = /iPhone/.test(u) ? 'iPhone' : /iPad|Macintosh.*Mobile/.test(u) || (/Macintosh/.test(u) && navigator.maxTouchPoints > 1) ? 'iPad' : /Android/.test(u) ? 'Android' : /Mac/.test(u) ? 'Mac' : /Windows/.test(u) ? 'Windows' : '기타';
+    return d + (matchMedia('(display-mode: standalone)').matches || navigator.standalone ? ' · 홈 화면 앱' : ' · 브라우저'); },
+  async ping(force){ if(DEMO || !S.me || !API.ping || document.visibilityState !== 'visible') return; const n = Date.now(); if(!force && n - this.last < 60000) return; this.last = n;
+    try{ await API.ping(S.me, this.device()); } catch(e){ /* 표가 없으면 조용히 넘어가요 */ } },
+  start(){ this.ping(true); setInterval(() => this.ping(), 180000);
+    document.addEventListener('visibilitychange', () => { if(document.visibilityState === 'visible') this.ping(true); });
+    document.addEventListener('pointerdown', () => this.ping(), {passive:true}); } };
 /* 아이폰 키보드가 닫히면 화면을 제자리로 돌려 놓아요 (안 그러면 닫기 버튼 등이 안 눌려요) */
 { let y0 = 0; document.addEventListener('focusin', e => { if(e.target.matches?.('input,textarea')) y0 = window.scrollY; });
   document.addEventListener('focusout', e => { if(!e.target.matches?.('input,textarea')) return;
@@ -1700,7 +1717,7 @@ function passGate(msg){ const g = $('#gate'); g.classList.remove('hidden');
   g.innerHTML = `<form class="gbox" id="pg"><h2>우리 아카이브</h2><p>둘이 정한 비밀번호를 넣어 주세요. 이 기기에서는 한 번만 넣으면 돼요.</p>
     <input type="password" id="pw" autocomplete="current-password" placeholder="비밀번호" required><div class="err">${esc(msg||'')}</div><button class="btn pri">들어가기</button></form>`;
   $('#pg').onsubmit = async e => { e.preventDefault(); const pw = $('#pw').value; try{ if(await CloudAPI.init(pw)){ store.set('archive.pass', pw); start(); } else passGate('비밀번호가 맞지 않아요'); } catch(err){ console.error(err); passGate('연결하지 못했어요. 설정을 확인해 주세요'); } }; }
-async function start(){ $('#gate').classList.add('hidden'); await refresh(); S.ready = true; if(!S.me) whoGate(); route(); Push.init(); }
+async function start(){ $('#gate').classList.add('hidden'); await refresh(); S.ready = true; if(!S.me) whoGate(); route(); Push.init(); Alive.start(); }
 function loadSb(){ return new Promise((ok,no) => { if(window.supabase) return ok(); const s = document.createElement('script'); s.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js'; s.onload = ok; s.onerror = no; document.head.append(s); }); }
 
 (async () => { render();
