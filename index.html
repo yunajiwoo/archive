@@ -548,6 +548,8 @@ img,video,[data-rx] img{-webkit-touch-callout:default!important}
 @media(max-width:600px){.msbtn{width:34px;height:34px}}
 /* 아이폰: 키보드가 닫힌 뒤 화면 위치가 어긋나 버튼이 안 눌리는 문제 */
 body.modal-open{overflow:hidden}
+.mcmed{width:min(220px,60vw);margin-top:3px}.mcmed .mg{border-radius:12px;overflow:hidden}
+.copt[hidden]{display:none!important}
 </style>
 </head>
 <body>
@@ -875,7 +877,7 @@ function composer(opts){ /* 사진·동영상 첨부 + 날짜가 있는 입력�
   el.innerHTML = `${opts.reply?'<div class="replying hidden"></div>':''}<div class="pend"></div>
     <div class="crow"><button type="button" class="attach" aria-label="사진·동영상 첨부"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="3"/><circle cx="9" cy="11" r="2"/><path d="m21 16-5-5-8 8"/></svg></button>
     <textarea placeholder="${esc(opts.placeholder)}" maxlength="4000" rows="1"></textarea><button class="send">${opts.label||'남기기'}</button></div>
-    <div class="copt"><label class="check" style="min-height:38px"><input type="checkbox" class="hasd"> 날짜 넣기 (캘린더에 추억으로)</label><input type="date" class="dt hidden" value="${ymd(new Date())}"></div>`;
+    <div class="copt"${opts.noDate?' hidden':''}><label class="check" style="min-height:38px"><input type="checkbox" class="hasd"> 날짜 넣기 (캘린더에 추억으로)</label><input type="date" class="dt hidden" value="${ymd(new Date())}"></div>`;
   const ta = el.querySelector('textarea'), pend = el.querySelector('.pend'), send = el.querySelector('.send'), hasd = el.querySelector('.hasd'), dt = el.querySelector('.dt'); autoGrow(ta); if(!opts.noEnter) enterToSend(ta, el);
   hasd.onchange = () => dt.classList.toggle('hidden', !hasd.checked);
   const draw = () => { pend.innerHTML = files.map((p,i) => `<div><img src="${p.prev}" alt="">${p.kind==='video'?'<span class="play" style="width:26px;height:26px"></span>':''}<button type="button" data-rm="${i}" aria-label="빼기">×</button></div>`).join(''); };
@@ -977,7 +979,7 @@ function activity(){ const me = S.me, A = []; if(!me) return A; const by = w => 
   for(const m of S.missions){ if(by(m.owner)) A.push({at:m.created_at, who:m.owner, text:m.blind?'비밀 미션을 추가했어요 🙈':'미션을 추가했어요', sub:m.blind?'달성하면 무엇이었는지 알 수 있어요':m.title, go:'mi-'+m.id});
     if(by(m.owner) && m.done && m.done_at) A.push({at:m.done_at, who:m.owner, text:'미션을 달성했어요 ✓', sub:m.title, go:'mi-'+m.id}); }
   for(const c of S.mchats) if(by(c.author)){ const m = S.missions.find(x=>x.id===c.mission_id), v = m && m.blind && !m.done && m.owner===c.author;
-    A.push({at:c.created_at, who:c.author, text:'미션에 댓글을 남겼어요', sub:`[${mT(m)}] ${v ? '🙈 달성하면 볼 수 있어요' : c.body}`, go:'mi-'+c.mission_id}); }
+    A.push({at:c.created_at, who:c.author, text:'미션에 댓글을 남겼어요', sub:`[${mT(m)}] ${v ? '🙈 달성하면 볼 수 있어요' : (c.body || '📷 사진')}`, go:'mi-'+c.mission_id}); }
   return A.sort((a,b) => b.at.localeCompare(a.at)).slice(0, 150); }
 const unread = () => { const cut = S.seen[S.me] || ''; return activity().filter(a => a.at > cut).length; };
 async function seeNow(){ const at = new Date().toISOString(); S.seen[S.me] = at; try{ await API.markSeen(S.me, at); } catch(e){ console.error(e); } }
@@ -1260,19 +1262,21 @@ const Mission = { who: store.get('archive.mwho') || 'all', showDone: store.get('
       <button class="mchk big${mine?'':' ro'}" ${mine?`data-mchk2="1"`:'tabindex="-1"'} aria-label="달성"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></button>
       <div><h2>${this.hidden(m) ? '🙈 비밀 미션' : esc(m.title)}</h2><p>${m.done ? `${m.done_at?kdate(ymd(new Date(m.done_at))):''} 달성했어요 ✓` : this.hidden(m) ? `${WHO[m.owner]}가 달성하면 무엇이었는지 알 수 있어요. 응원은 지금 남길 수 있어요!` : mine ? (m.blind ? '🔒 블라인드 · 달성하면 상대에게 공개돼요' : '동그라미를 눌러 달성 표시를 해요') : '진행 중이에요'}</p></div></div>
       <div class="chat" id="mchat"></div></div>
-    <form class="composer" id="mic"><div class="crow"><textarea placeholder="${m.done?'후기를 남겨 보세요':(mine && m.blind)?'🔒 달성 전까지 내 댓글은 상대에게 가려져요':'응원이나 한마디를 남겨 보세요'}" maxlength="2000" rows="1"></textarea><button class="send">보내기</button></div></form>`, 'tall');
+    <div id="micw"></div>`, 'tall');
     if(mine){ $('#miedit').onclick = () => { S.openMission = null; this.form(m); }; $('[data-mchk2]').onclick = () => this.toggle(id, $('[data-mchk2]')); }
-    const f = $('#mic'), ta = f.querySelector('textarea'); autoGrow(ta); enterToSend(ta, f);
-    f.onsubmit = async ev => { ev.preventDefault(); const body = ta.value.trim(); if(!body) return; ta.value = ''; ta.style.height = '';
-      try{ await API.put('mchats', {mission_id:id, author:S.me, body}); await refresh(); } catch(err){ console.error(err); ta.value = body; toast('보내지 못했어요'); } };
+    const ph = m.done ? '후기를 남겨 보세요' : (mine && m.blind) ? '🔒 달성 전까지 내 댓글은 상대에게 가려져요' : '응원이나 한마디를 남겨 보세요';
+    const c = composer({placeholder:ph, label:'보내기', noDate:true, onSubmit: async ({body, media}) => { await API.put('mchats', {mission_id:id, author:S.me, body, media}); await refresh(); }});
+    c.id = 'mic'; $('#micw').replaceWith(c);
     this.renderChat(); },
   renderChat(){ const box = $('#mchat'); if(!box) return; const L = S.mchats.filter(c=>c.mission_id===S.openMission).sort((a,b) => a.created_at.localeCompare(b.created_at));
     const sc = box.parentElement, atBottom = sc.scrollHeight - sc.scrollTop - sc.clientHeight < 60;
     const m = S.missions.find(x=>x.id===S.openMission), veil = m && this.hidden(m);
     box.innerHTML = L.length ? L.map(c => (veil && c.author===m.owner)
       ? `<div class="msg ${c.author}">${av(c.author)}<div class="bw"><div class="bub veil">🙈 달성하면 볼 수 있어요</div></div><time>${stamp(c.created_at)}</time></div>`
-      : `<div class="msg ${c.author}${c.author===S.me?' mine':''}">${av(c.author)}<div class="bw"><div class="bub" data-rx="mchats:${c.id}">${esc(c.body)}</div>${rxRow(c)}</div><time>${stamp(c.created_at)}</time></div>`).join('') : '<div class="empty">응원이나 후기를 남겨 보세요</div>';
-    if(atBottom) sc.scrollTop = sc.scrollHeight; bindReact(box); }
+      : `<div class="msg ${c.author}${c.author===S.me?' mine':''}">${av(c.author)}<div class="bw">${c.body?`<div class="bub" data-rx="mchats:${c.id}">${esc(c.body)}</div>`:''}${c.media?.length?`<div class="mcmed" data-mcm="${c.id}">${mediaGrid(c.media,'small')}</div>`:''}${rxRow(c)}</div><time>${stamp(c.created_at)}</time></div>`).join('') : '<div class="empty">응원이나 후기를 남겨 보세요</div>';
+    if(atBottom) sc.scrollTop = sc.scrollHeight; bindReact(box);
+    if(!box._mlb){ box._mlb = true; box.addEventListener('click', e => { const b = e.target.closest('[data-lb]'); if(!b) return; const h = b.closest('[data-mcm]'); const c = S.mchats.find(x=>x.id===h?.dataset.mcm); if(c) lightbox(c.media, +b.dataset.lb); }); }
+    box.querySelectorAll('img').forEach(im => im.addEventListener('load', () => { if(atBottom) sc.scrollTop = sc.scrollHeight; }, {once:true})); }
 };
 
 function subNav(){ return `<div class="subnav"><button data-sub="draw" class="${S.sub!=='mission'?'on':''}">그리기</button><button data-sub="mission" class="${S.sub==='mission'?'on':''}">미션</button></div>`; }
