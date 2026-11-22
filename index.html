@@ -914,7 +914,7 @@ function openPost(id, cmId, dir){ const p = S.posts.find(x=>x.id===id); if(!p) r
   let AL = albumList(); if(!AL.some(x=>x.id===id)) AL = [...S.posts].sort((a,b) => (b.memory_date||b.created_at.slice(0,10)).localeCompare(a.memory_date||a.created_at.slice(0,10)) || b.created_at.localeCompare(a.created_at)); const idx = AL.findIndex(x=>x.id===id), prevP = AL[idx-1], nextP = AL[idx+1];
   const el = $('#panel'); el.classList.remove('hidden'); document.body.style.overflow = 'hidden';
   el.innerHTML = `<div class="ph"><button class="btn" id="pback">‹ 사진첩</button><div class="pnav"><button class="ib" id="pprev" ${prevP?'':'disabled'} aria-label="이전 글">‹</button><span>${idx+1} / ${AL.length}</span><button class="ib" id="pnext" ${nextP?'':'disabled'} aria-label="다음 글">›</button></div><button class="btn" id="pedit">수정</button><button class="btn danger" id="pdel">삭제</button></div>
-    <div class="pb" id="pbody"><div class="pwrap"><div id="pmedia"></div><p class="cap">${esc(p.caption)}</p><div class="meta">${av(p.author)}<span><b class="pfn" data-pf="${p.author}">${WHO[p.author]}</b> · ${stamp(p.created_at)}</span>${fname(p.folder_id)?`<span class="ftag">${esc(fname(p.folder_id))}</span>`:''}${p.memory_date?`<span class="tag">${kdate(p.memory_date)}</span>`:''}</div>
+    <div class="pb" id="pbody"><div class="pwrap"><div id="pmedia"></div><p class="cap">${esc(p.caption)}</p><div class="meta">${av(p.author)}<span><b class="pfn" data-prof="${p.author}">${WHO[p.author]}</b> · ${stamp(p.created_at)}</span>${fname(p.folder_id)?`<span class="ftag">${esc(fname(p.folder_id))}</span>`:''}${p.memory_date?`<span class="tag">${kdate(p.memory_date)}</span>`:''}</div>
     <div class="cmts"><h3>댓글</h3><div id="clist"></div></div></div></div>`;
   $('#pmedia').innerHTML = mediaGrid(p.media); $('#pmedia').onclick = e => { const b = e.target.closest('[data-lb]'); if(b) lightbox(p.media, +b.dataset.lb, async (k, blob) => { const cur = S.posts.find(x=>x.id===p.id) || p; await replaceMedia('posts', cur, k, blob); openPost(p.id); }); };
   const c = composer({placeholder:`${WHO[S.me]}로 댓글 남기기`, reply:true, onSubmit: async ({body, media, memory_date}) => {
@@ -951,7 +951,7 @@ document.addEventListener('keydown', e => { if(!S.openPost || $('#panel').classL
   if(e.key==='ArrowLeft') $('#pprev')?.click(); else if(e.key==='ArrowRight') $('#pnext')?.click(); });
 function closePost(){ S.openPost = null; $('#panel').classList.add('hidden'); $('#panel').innerHTML = ''; document.body.style.overflow = ''; }
 function renderComments(){ const box = $('#clist'); if(!box) return; const all = S.comments.filter(c=>c.post_id===S.openPost);
-  const one = c => `<div class="cm" id="cm-${c.id}">${av(c.author)}<div class="cc"><div class="who"><b class="pfn" data-pf="${c.author}">${WHO[c.author]}</b> <span class="meta" style="display:inline">${stamp(c.created_at)}</span> ${c.memory_date?`<span class="tag">${kdate(c.memory_date)}</span>`:''}</div>
+  const one = c => `<div class="cm" id="cm-${c.id}">${av(c.author)}<div class="cc"><div class="who"><b class="pfn" data-prof="${c.author}">${WHO[c.author]}</b> <span class="meta" style="display:inline">${stamp(c.created_at)}</span> ${c.memory_date?`<span class="tag">${kdate(c.memory_date)}</span>`:''}</div>
     <div class="rxa" data-rx="comments:${c.id}">${c.body?`<div class="txt">${esc(c.body)}</div>`:''}<div data-cmm="${c.id}">${mediaGrid(c.media,'small')}</div></div>${rxRow(c)}
     <div class="acts"><button data-reply="${c.parent_id||c.id}" data-name="${WHO[c.author]}">답글</button>${c.author===S.me?`<button data-cdel="${c.id}">삭제</button>`:''}</div></div></div>`;
   const tops = all.filter(c=>!c.parent_id);
@@ -1064,9 +1064,9 @@ function showProfile(w){ document.querySelector('.pfov')?.remove(); const pr = S
     const img = e.target.closest('.av.huge img'); if(img){ close(); lightbox([{url:img.src, kind:'image'}], 0); } };
   const inp = ov.querySelector('input'); if(inp) inp.onkeydown = e => { if(e.key==='Enter'){ e.preventDefault(); ov.querySelector('[data-save]').click(); } if(e.key==='Escape') close(); };
   ov.tabIndex = -1; ov.focus(); ov.onkeydown = e => { if(e.key==='Escape') close(); }; }
-document.addEventListener('click', e => { const t = e.target.closest('[data-pf], .av'); if(!t) return;
+document.addEventListener('click', e => { const t = e.target.closest('[data-prof], .av'); if(!t) return;
   if(t.closest('#meBtn,#gate,#setb,.seg,.pend,.nw,.prof,.pfov,.tabs,.rxpop,.brand,.item,.card,.lb')) return;
-  const w = t.dataset.pf || ['yuna','jiwoo'].find(k => t.classList.contains(k)); if(!w) return; e.preventDefault(); e.stopPropagation(); showProfile(w); }, true);
+  const w = t.dataset.prof || ['yuna','jiwoo'].find(k => t.classList.contains(k)); if(!w || !WHO[w]) return; e.preventDefault(); e.stopPropagation(); showProfile(w); }, true);
 function openSettings(){ if(!S.me) return whoGate(); const pr = S.profiles[S.me] || {}; const {skin, mode} = applyLook();
   openSheet(`<div class="sh"><h3>설정</h3><button class="ib cx" data-close aria-label="닫기"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div><div class="sb" id="setb">
     <div class="sec"><h4>이 기기에서 기록하는 사람</h4><div class="seg">${['yuna','jiwoo'].map(w=>`<button type="button" class="${w}${S.me===w?' on':''}" data-me="${w}">${av(w)}${WHO[w]}</button>`).join('')}</div></div>
